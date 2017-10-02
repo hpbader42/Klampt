@@ -3,7 +3,6 @@
 #include "Modeling/World.h"
 #include "Simulation/WorldSimulation.h"
 #include <iostream>
-#include <boost/foreach.hpp>
 
 string toStdString(const QString& s);
 
@@ -46,8 +45,8 @@ void ControllerDialog::OnRobotChange(int robot)
         ui->tableWidget->item(j,0)->setText(QString::fromStdString(i->second));
     }
     commands=sim->robotControllers[robot]->Commands();
-    BOOST_FOREACH(string str,commands){
-        ui->comboBox->addItem(QString::fromStdString(str));
+    for(int i =0; i<commands.size(); i++){
+      ui->comboBox->addItem(QString::fromStdString(commands[i]));
     }
     refreshing=0;
   blockSignals(false);

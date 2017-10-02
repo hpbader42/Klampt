@@ -5,7 +5,6 @@
 #include <string.h>
 #include <KrisLibrary/utils/ioutils.h>
 
-#include <boost/foreach.hpp>
 
 ResourceNode::ResourceNode(const ResourcePtr& p,ResourceNode* _parent)
   :resource(p),parent(_parent)
@@ -143,8 +142,10 @@ void ResourceNode::Print(int level)
   for(int i=0;i<level;i++)
     LOG4CXX_INFO(KrisLibrary::logger(),"-");
   LOG4CXX_INFO(KrisLibrary::logger(),""<<Name()<<""<<Decorator());
-  BOOST_FOREACH(ResourceNodePtr child,children)
+  for(int i=0; i<children.size(); i++){
+    ResourceNodePtr child = children[i];
     child->Print(level+1);
+  }
 }
 
 vector<string> ResourceNode::PathTo() const
@@ -310,9 +311,11 @@ bool ResourceTree::BackupAll(string* errorMessage)
   return true;
 }
 
-void ResourceTree::Print(){
-    BOOST_FOREACH(ResourceNodePtr child,topLevel)
-      child->Print();
+void ResourceTree::Print(){   
+  for(int i =0; i<topLevel.size(); i++){
+    ResourceNodePtr child = topLevel[i];
+    child->Print();
+  }
 }
 
 int ResourceTree::ChildIndex(ResourceNode* n) const
