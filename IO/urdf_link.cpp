@@ -35,8 +35,6 @@
 /* Author: Wim Meeussen */
 
 
-#include <log4cxx/logger.h>
-#include <KrisLibrary/Logger.h>
 #include "urdf_parser.h"
 #include "urdf_link.h"
 #include <fstream>
@@ -191,7 +189,7 @@ bool parseMesh(Mesh &m, TiXmlElement *c)
     }
     catch (ParseError &e) {
       m.scale.clear();
-      LOG4CXX_DEBUG(KrisLibrary::logger(),  "Mesh scale was specified, but could not be parsed: "<< e.what());
+      if(debug) printf ("Mesh scale was specified, but could not be parsed: %s", e.what());
       return false;
     }
   }
@@ -245,7 +243,7 @@ std::shared_ptr<Geometry> parseGeometry(TiXmlElement *g)
   }
   else
   {
-    LOG4CXX_DEBUG(KrisLibrary::logger(),  "Unknown geometry type '"<< type_name.c_str());
+    if(debug) printf ("Unknown geometry type '%s' \n", type_name.c_str());
     return geom;
   }
   
@@ -410,7 +408,7 @@ bool parseLink(Link &link, TiXmlElement* config)
     link.inertial.reset(new Inertial());
     if (!parseInertial(*link.inertial, i))
     {
-      LOG4CXX_DEBUG(KrisLibrary::logger(),  "Could not parse inertial element for Link ["<< link.name.c_str());
+      if(debug) printf ("Could not parse inertial element for Link [%s] \n", link.name.c_str());
       return false;
     }
   }
@@ -430,17 +428,17 @@ bool parseLink(Link &link, TiXmlElement* config)
         viss.reset(new std::vector<std::shared_ptr<Visual > >);
         // new group name, create vector, add vector to map and add Visual to the vector
         link.visual_groups.insert(make_pair(vis->group_name,viss));
-        LOG4CXX_DEBUG(KrisLibrary::logger(),  "successfully added a new visual group name '"<<vis->group_name.c_str());
+        if(debug) printf ("successfully added a new visual group name '%s' \n",vis->group_name.c_str());
       }
       
       // group exists, add Visual to the vector in the map
       viss->push_back(vis);
-      LOG4CXX_DEBUG(KrisLibrary::logger(),  "successfully added a new visual under group name '"<<vis->group_name.c_str());
+      if(debug) printf ("successfully added a new visual under group name '%s' \n",vis->group_name.c_str());
     }
     else
     {
       vis.reset();
-      LOG4CXX_DEBUG(KrisLibrary::logger(),  "Could not parse visual element for Link ["<< link.name.c_str());
+      if(debug) printf ("Could not parse visual element for Link [%s] \n", link.name.c_str());
       return false;
     }
   }
@@ -482,17 +480,17 @@ bool parseLink(Link &link, TiXmlElement* config)
         cols.reset(new std::vector<std::shared_ptr<Collision > >);
         // new group name, create vector, add vector to map and add Collision to the vector
         link.collision_groups.insert(make_pair(col->group_name,cols));
-        LOG4CXX_DEBUG(KrisLibrary::logger(),  "successfully added a new collision group name '"<<col->group_name.c_str());
+        if(debug) printf ("successfully added a new collision group name '%s' \n",col->group_name.c_str());
       }
 
       // group exists, add Collision to the vector in the map
       cols->push_back(col);
-      LOG4CXX_DEBUG(KrisLibrary::logger(),  "successfully added a new collision under group name '"<<col->group_name.c_str());
+      if(debug) printf ("successfully added a new collision under group name '%s' \n",col->group_name.c_str());
     }
     else
     {
       col.reset();
-      LOG4CXX_DEBUG(KrisLibrary::logger(),  "Could not parse collision element for Link ["<<  link.name.c_str());
+      if(debug) printf ("Could not parse collision element for Link [%s] \n",  link.name.c_str());
       return false;
     }
   }
@@ -504,11 +502,11 @@ bool parseLink(Link &link, TiXmlElement* config)
 
   if (!default_collision)
   {
-    LOG4CXX_DEBUG(KrisLibrary::logger(),  "No 'default' collision group for Link '"<< link.name.c_str());
+    if(debug) printf ("No 'default' collision group for Link '%s' \n", link.name.c_str());
   }
   else if (default_collision->empty())
   {
-    LOG4CXX_DEBUG(KrisLibrary::logger(),  "'default' collision group is empty for Link '"<< link.name.c_str());
+    if(debug) printf ("'default' collision group is empty for Link '%s' \n", link.name.c_str());
   }
   else
   {
