@@ -3,7 +3,6 @@
 #include <string.h>
 #include <KrisLibrary/utils/ioutils.h>
 
-
 ResourceNode::ResourceNode(const ResourcePtr& p,ResourceNode* _parent)
   :resource(p),parent(_parent)
 {
