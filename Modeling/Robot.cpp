@@ -38,7 +38,7 @@ public:
 	}
 	size_t numVotes() const {
 		size_t cnt = 0;
-		for(typename map<Val,size_t>::const_iterator i=counts.begin();i!=counts.end();i++)
+		for(auto i=counts.begin();i!=counts.end();i++)
 			cnt += i->second;
 		return cnt;
 	}
@@ -47,7 +47,7 @@ public:
 	Val winner() const {
 		size_t imax = 0;
 		Val vmax;
-		for(typename map<Val,size_t>::const_iterator i=counts.begin();i!=counts.end();i++) {
+		for(auto i=counts.begin();i!=counts.end();i++) {
 			if(i->second > imax) {
 				imax = i->second;
 				vmax = i->first;
@@ -125,9 +125,15 @@ void GetAccMax(const Robot& robot, Vector& accMax) {
 				+ oldCom * oldMass) / (robot.links[i].mass + oldMass);
 		accMax(i) = robot.torqueMax[i] / (sumCom * sumMass * 9.8);
 		if (!IsFinite(accMax(i))) {
+<<<<<<< HEAD
 			printf("Warning, infinite acceleration limit for joint %d\n", i);
 			printf("Press enter to continue\n");
 			getchar();
+=======
+			LOG4CXX_WARN(KrisLibrary::logger(),"Warning, infinite acceleration limit for joint "<< i);
+			LOG4CXX_INFO(KrisLibrary::logger(),"Press enter to continue");
+			//KrisLibrary::loggerWait();
+>>>>>>> 760657aa8a5ee6069d1783c28ffdc78691934cf4
 		}
 	}
 }
@@ -173,16 +179,16 @@ bool Robot::Load(const char* fn) {
 	bool res = false;
 	const char* ext = FileExtension(fn);
 	if(ext == NULL) {
-	  fprintf(stderr,"Robot::Load(%s): no extension, file must have .rob or .urdf extension\n",fn);
-	}
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::Load("<<fn <<"): no extension, file must have .rob or .urdf extension");
+	 }
 	else if (0 == strcmp(ext, "rob")) {
 		res = LoadRob(fn);
 	} else if (0 == strcmp(ext, "urdf")) {
 		res = LoadURDF(fn);
 	}
 	else {
-	  fprintf(stderr,"Robot::Load(%s): unknown extension %s, only .rob or .urdf supported\n",fn,ext);
-	}
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::Load("<<fn<<"): unknown extenion "<<ext <<", only .rob or .urdf supported");
+	  }
 	return res;
 }
 
@@ -231,13 +237,13 @@ bool Robot::LoadRob(const char* fn) {
 
 	ifstream in(fn, ios::in);
 	if (!in) {
-	  printf("Unable to read robot file %s, file does not exist or is not available for reading\n", fn);
+	  LOG4CXX_INFO(KrisLibrary::logger(),"Unable to read robot file "<< fn<<", file does not exist or is not available for reading");
 	  return false;
 	}
-	printf("Reading robot file %s...\n", fn);
+	LOG4CXX_INFO(KrisLibrary::logger(),"Reading robot file "<< fn <<"...");
 	int lineno = 0;
 	while (in) {
-		//cout<<"Reading line "<<name<<"..."<<endl;
+		//LOG4CXX_INFO(KrisLibrary::logger(),"Reading line "<<name<<"...");
 		//read the rest of the line
 		string line,name;
 		char buf[1025];
@@ -276,7 +282,7 @@ bool Robot::LoadRob(const char* fn) {
 		  continue; //empty line
 		}
 		Lowercase(name);
-		//cout<<"Reading line "<<name<<" line "<<lineno<<endl;
+		//LOG4CXX_INFO(KrisLibrary::logger(),"Reading line "<<name<<" line "<<lineno);
 		string stemp;
 		int itemp;
 		Real ftemp;
@@ -476,8 +482,7 @@ bool Robot::LoadRob(const char* fn) {
 					tempJoint.type = RobotJoint::Floating;
 					ss >> tempJoint.linkIndex;
 					if (tempJoint.linkIndex <= 0) {
-						printf("Invalid floating link %d on line %d\n",
-								tempJoint.linkIndex, lineno);
+						LOG4CXX_INFO(KrisLibrary::logger(),"Invalid floating link "<< tempJoint.linkIndex<<" on line "<< lineno);
 						return false;
 					}
 					if (ss) {
@@ -491,8 +496,7 @@ bool Robot::LoadRob(const char* fn) {
 					tempJoint.type = RobotJoint::BallAndSocket;
 					ss >> tempJoint.linkIndex;
 					if (tempJoint.linkIndex <= 0) {
-						printf("Invalid ballandsocket link %d on line %d\n",
-								tempJoint.linkIndex, lineno);
+						LOG4CXX_INFO(KrisLibrary::logger(),"Invalid ballandsocket link "<<tempJoint.linkIndex <<" on line "<<lineno);
 						return false;
 					}
 					if (ss) {
@@ -506,8 +510,7 @@ bool Robot::LoadRob(const char* fn) {
 					tempJoint.type = RobotJoint::FloatingPlanar;
 					ss >> tempJoint.linkIndex;
 					if (tempJoint.linkIndex <= 0) {
-						printf("Invalid floatingplanar link %d on line %d\n",
-								tempJoint.linkIndex, lineno);
+						LOG4CXX_INFO(KrisLibrary::logger(),"Invalid floatingplanar link "<<tempJoint.linkIndex <<" on line "<<lineno);
 						return false;
 					}
 					if (ss) {
@@ -518,7 +521,7 @@ bool Robot::LoadRob(const char* fn) {
 						}
 					}
 				} else {
-					printf("Invalid joint type %s on line %d\n", stemp.c_str(),
+					LOG4CXX_INFO(KrisLibrary::logger(),"Invalid joint type "<< stemp.c_str()<<" on line "<<
 							lineno);
 					return false;
 				}
@@ -584,8 +587,7 @@ bool Robot::LoadRob(const char* fn) {
 					tempDriver.linkIndices[1] = itemp;
 					//Settings are loaded below
 				} else {
-					fprintf(stderr, "   Invalid driver type %s on line %d\n",
-							stemp.c_str(), lineno);
+					LOG4CXX_ERROR(KrisLibrary::logger(), "   Invalid driver type "<< stemp.c_str()<<" on line "<<lineno);
 					return false;
 				}
 			}
@@ -609,7 +611,7 @@ bool Robot::LoadRob(const char* fn) {
 			if (ss) {
 				ss >> Ttemp;
 				if (!ss) {
-					printf("   Note: didn't read subchain transform\n");
+					LOG4CXX_INFO(KrisLibrary::logger(),"   Note: didn't read subchain transform");
 					ss.clear();
 					Ttemp.setIdentity();
 				}
@@ -621,7 +623,7 @@ bool Robot::LoadRob(const char* fn) {
 			  ss >> op;
 			  if(op == "as") {
 			    if(!SafeInputString(ss,name))  {
-			      fprintf(stderr,"   Error reading mount alias\n");
+			      LOG4CXX_ERROR(KrisLibrary::logger(),"   Error reading mount alias");
 			      name = "";
 			    }
 			  }
@@ -641,8 +643,7 @@ bool Robot::LoadRob(const char* fn) {
 		  SafeInputString(ss,stemp);
 		  getline(ss, value);
 		  if(ss.fail() || ss.bad()) {
-			fprintf(stderr, "   Explicit property on line %d could not be read\n",
-					name.c_str(), lineno);
+			LOG4CXX_ERROR(KrisLibrary::logger(), "   Explicit property on line "<< lineno<<" could not be read");
 			return false;
 		  }
 		  if(stemp == "controller" || stemp == "sensors") {
@@ -654,24 +655,28 @@ bool Robot::LoadRob(const char* fn) {
 			    //prepend the robot path
 			    string fn = path + file;
 			    if(!GetFileContents(fn.c_str(),properties[stemp])) {
-			    	fprintf(stderr,"     Unable to read %s property from file %s\n",stemp.c_str(),fn.c_str());
+			    	LOG4CXX_ERROR(KrisLibrary::logger(),"     Unable to read "<<stemp.c_str()<<" property from file "<<fn.c_str());
 			    	return false;
 			    }
 			}
-			else 
+			else {
 				properties[stemp] = value;
+				stringstream ss(value);
+				TiXmlElement e(stemp.c_str());
+				ss >> e;
+				if(!ss) 
+					LOG4CXX_ERROR(KrisLibrary::logger(),"     Property "<<stemp.c_str()<<" is not valid XML");
+			}
 		  }
 		  else 
 		    properties[stemp] = value; 
 		} else {
-			fprintf(stderr, "   Invalid robot property %s on line %d\n",
-					name.c_str(), lineno);
+			LOG4CXX_ERROR(KrisLibrary::logger(), "   Invalid robot property "<<name.c_str()<<" on line "<<lineno<< "");
 			return false;
 		}
 		if (ss.bad()) {
-			fprintf(stderr,
-					"   Error encountered while reading robot property %s on line %d\n",
-					name.c_str(), lineno);
+						LOG4CXX_ERROR(KrisLibrary::logger(),
+					"   Error encountered while reading robot property "<<name.c_str()<<" on line "<<lineno);
 			return false;
 		}
 	}
@@ -706,118 +711,118 @@ bool Robot::LoadRob(const char* fn) {
 	//joints.resize(0);
 	bool sizeErr = false;
 	if (!parents.empty() && n != parents.size()) {
-		fprintf(stderr, "   Wrong number of parents specified (%d)\n",parents.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of parents specified ("<<parents.size()<<")");
 		sizeErr = true;
 	}
 	if (!linkNames.empty() && n != linkNames.size()) {
-		fprintf(stderr, "   Wrong number of link names specified (%d)\n",linkNames.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of link names specified ("<<linkNames.size()<<")");
 		sizeErr = true;
 	}
 	if (!driverNames.empty() && nd != driverNames.size()) {
-		fprintf(stderr, "   Wrong number of driver names specified (%d)\n",driverNames.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of driver names specified ("<<driverNames.size()<<")");
 		sizeErr = true;
 	}
 	if (!drivers.empty() && nd != drivers.size()) {
-		fprintf(stderr, "   Wrong number of drivers specified (%d)\n",drivers.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of drivers specified ("<<drivers.size()<<")");
 		sizeErr = true;
 	}
 	if (!jointType.empty() && n != jointType.size()) {
-		fprintf(stderr, "   Wrong number of joint types specified (%d)\n",jointType.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of joint types specified ("<<jointType.size()<<")");
 		sizeErr = true;
 	}
 	if (!joints.empty() && nj != joints.size()) {
-		fprintf(stderr, "   Wrong number of joints specified (%d)\n",joints.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of joints specified ("<<joints.size()<<")");
 		sizeErr = true;
 	}
 	if (!massVec.empty() && n != massVec.size()) {
-		fprintf(stderr, "   Wrong number of masses specified (%d)\n",massVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of masses specified ("<<massVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!comVec.empty() && n != comVec.size()) {
-	  fprintf(stderr, "   Wrong number of COMs specified (%d)\n",comVec.size());
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of COMs specified ("<<comVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!inertiaVec.empty() && n != inertiaVec.size()) {
-	  fprintf(stderr, "   Wrong number of inertia components specified (%d)\n",inertiaVec.size());
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of inertia components specified ("<<inertiaVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!a.empty() && n != a.size()) {
-	  fprintf(stderr, "   Wrong number of DH-parameters specified (%d)\n",a.size());
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of DH-parameters specified ("<<a.size()<<")");
 		sizeErr = true;
 	}
 	if (!d.empty() && n != d.size()) {
-		fprintf(stderr, "   Wrong number of DH-parameters specified (%d)\n",d.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of DH-parameters specified ("<<d.size()<<")");
 		sizeErr = true;
 	}
 	if (!alpha.empty() && n != alpha.size()) {
-		fprintf(stderr, "   Wrong number of DH-parameters specified (%d)\n",alpha.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of DH-parameters specified ("<<alpha.size()<<")");
 		sizeErr = true;
 	}
 	if (!theta.empty() && n != theta.size()) {
-		fprintf(stderr, "   Wrong number of DH-parameters specified (%d)\n",theta.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of DH-parameters specified ("<<theta.size()<<")");
 		sizeErr = true;
 	}
 	if (!TParent.empty() && n != TParent.size()) {
-		fprintf(stderr, "   Wrong number of link transforms specified (%d)\n",TParent.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of link transforms specified ("<<TParent.size()<<")");
 		sizeErr = true;
 	}
 	if (!axes.empty() && n != axes.size()) {
-		fprintf(stderr, "   Wrong number of axes specified (%d)\n",axes.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of axes specified ("<<axes.size()<<")");
 		sizeErr = true;
 	}
 	if (!qVec.empty() && n != qVec.size()) {
-		fprintf(stderr, "   Wrong number of configuration variables specified (%d)\n",qVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of configuration variables specified ("<<qVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!qMaxVec.empty() && n != qMaxVec.size()) {
-		fprintf(stderr, "   Wrong number of joint limit variables specified (%d)\n",qMaxVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of joint limit variables specified ("<<qMaxVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!qMinVec.empty() && n != qMinVec.size()) {
-		fprintf(stderr, "   Wrong number of joint limit variables specified (%d)\n",qMinVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of joint limit variables specified ("<<qMinVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!vMaxVec.empty() && n != vMaxVec.size()) {
-		fprintf(stderr, "   Wrong number of velocity limit variables specified (%d)\n",vMaxVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of velocity limit variables specified ("<<vMaxVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!vMinVec.empty() && n != vMinVec.size()) {
-		fprintf(stderr, "   Wrong number of velocity limit variables specified (%d)\n",vMinVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of velocity limit variables specified ("<<vMinVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!tMaxVec.empty() && n != tMaxVec.size()) {
-		fprintf(stderr, "   Wrong number of torque limit variables specified (%d)\n",tMaxVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of torque limit variables specified ("<<tMaxVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!pMaxVec.empty() && n != pMaxVec.size()) {
-		fprintf(stderr, "   Wrong number of power limit variables specified (%d)\n",pMaxVec.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of power limit variables specified ("<<pMaxVec.size()<<")");
 		sizeErr = true;
 	}
 	if (!geomFn.empty() && n != geomFn.size()) {
 		fprintf(stderr, "   Wrong number of geometry files specified (%d)\n",
 				geomFn.size());
 		for (size_t i = 0; i < geomFn.size(); i++)
-			printf("     '%s' ", geomFn[i].c_str());
-		printf("\n");
+			LOG4CXX_INFO(KrisLibrary::logger(),"     '"<< geomFn[i].c_str());
+		LOG4CXX_INFO(KrisLibrary::logger(),"");
 		sizeErr = true;
 	}
 	if (!geomscale.empty() && n != geomscale.size() && 1 != geomscale.size()) {
-		fprintf(stderr, "   Wrong number of geometry scale variables specified (%d)\n",geomscale.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of geometry scale variables specified ("<<geomscale.size()<<")");
 		sizeErr = true;
 	}
 	if (!geommargin.empty() && n != geommargin.size() && 1 != geommargin.size()) {
-		fprintf(stderr, "   Wrong number of geometry margin variables specified (%d)\n",geommargin.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of geometry margin variables specified ("<<geommargin.size()<<")");
 		sizeErr = true;
 	}
 
 	if (sizeErr) {
 		printf("Votes:\n");
-		for(map<size_t,size_t>::const_iterator i=nvote.counts.begin();i!=nvote.counts.end();i++)
+		for(auto i=nvote.counts.begin();i!=nvote.counts.end();i++)
 			printf("%d: %d\n",i->first,i->second);
 		return false;
 	}
 
-	printf("   Parsing robot file, %d links read...\n", n);
+	LOG4CXX_INFO(KrisLibrary::logger(),"   Parsing robot file, "<< n <<" links read...");
 	if (parents.empty()) {
 		parents.resize(n);
 		for (int i = 0; i < (int) n; i++)
@@ -876,7 +881,7 @@ bool Robot::LoadRob(const char* fn) {
 	//dq.resize(n,0);
 	if (TParent.empty()
 			&& (a.empty() || d.empty() || alpha.empty() || theta.empty())) {
-		fprintf(stderr, "   No D-H parameters or link transforms specified\n");
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   No D-H parameters or link transforms specified");
 		return false;
 	} else if (TParent.empty()) {
 		DenavitHartenbergRobotSetup(alpha, a, d, theta, *this);
@@ -964,6 +969,7 @@ bool Robot::LoadRob(const char* fn) {
 			mscale.setIdentity();
 			mscale(0, 0) = mscale(1, 1) = mscale(2, 2) = geomscale[i];
 			geomManagers[i].TransformGeometry(mscale);
+			geometry[i] = geomManagers[i];
 		}
 		if (geommargin.size() == 1)
 		  geometry[i]->margin = geommargin[0];
@@ -1072,25 +1078,24 @@ bool Robot::LoadRob(const char* fn) {
 	}
 	//setup driver servo parameters, if they exist
 	if (!servoP.empty() && servoP.size() != nd) {
-		fprintf(stderr,
-				"   Wrong number of servo P parameters specified: %d vs %d\n",
-				servoP.size(), nd);
+		LOG4CXX_ERROR(KrisLibrary::logger(),
+				"   Wrong number of servo P parameters specified: "<<servoP.size()<<" vs "<<nd);
 		return false;
 	}
 	if (!servoI.empty() && servoI.size() != nd) {
-		fprintf(stderr, "   Wrong number of servo I parameters specified (%d)\n",servoI.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of servo I parameters specified ("<<servoI.size()<<")");
 		return false;
 	}
 	if (!servoD.empty() && servoD.size() != nd) {
-		fprintf(stderr, "   Wrong number of servo D parameters specified (%d)\n",servoD.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of servo D parameters specified ("<<servoD.size()<<")");
 		return false;
 	}
 	if (!dryFriction.empty() && dryFriction.size() != nd) {
-		fprintf(stderr, "   Wrong number of dry friction parameters specified (%d)\n",dryFriction.size());
+				LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of dry friction parameters specified ("<<dryFriction.size()<<")");
 		return false;
 	}
 	if (!viscousFriction.empty() &&  viscousFriction.size() != nd) {
-	  fprintf(stderr, "   Wrong number of viscous friction parameters specified (%d)\n",viscousFriction.size());
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(), "   Wrong number of viscous friction parameters specified ("<<viscousFriction.size()<<")");
 		return false;
 	}
 	for (size_t i = 0; i < servoP.size(); i++) {
@@ -1153,13 +1158,13 @@ bool Robot::LoadRob(const char* fn) {
 							links[i].mass);
 					//check for infinity
 					if(!links[i].inertia.isZero(1e300)) {
-					  cout<<"Huge automass inertia for "<<linkNames[i]<<": "<<endl<<links[i].inertia<<endl;
-					  cout<<"Press enter to continue..."<<endl;
-					  getchar();
+					  LOG4CXX_INFO(KrisLibrary::logger(),"Huge automass inertia for "<<linkNames[i]<<": "<<links[i].inertia);
+					  LOG4CXX_INFO(KrisLibrary::logger(),"Press enter to continue...");
+					  //KrisLibrary::loggerWait();
 					}
 				} else {
 					links[i].inertia.setZero();
-					//cout<<"Automass setting zero inertia for "<<linkNames[i]<<endl;
+					//LOG4CXX_INFO(KrisLibrary::logger(),"Automass setting zero inertia for "<<linkNames[i]);
 				}
 			}
 		}
@@ -1182,7 +1187,7 @@ bool Robot::LoadRob(const char* fn) {
 		  }
 		  if(link1 > link2) Swap(link1,link2);
 		  if(!(link1 < link2)) {
-		    cerr<<"Robot::Load(): Invalid self collision pair "<<selfCollision[i].first<<", "<<selfCollision[i].second<<endl;
+		    LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::Load(): Invalid self collision pair "<<selfCollision[i].first<<", "<<selfCollision[i].second);
 		      return false;
 		  }
 		  InitSelfCollisionPair(link1,link2);
@@ -1200,7 +1205,7 @@ bool Robot::LoadRob(const char* fn) {
 		}
 		  if(link1 > link2) Swap(link1,link2);
 		  if(!(link1 < link2)) {
-		    cerr<<"Robot::Load(): Invalid no-self collision pair "<<noSelfCollision[i].first<<", "<<noSelfCollision[i].second<<endl;
+		    LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::Load(): Invalid no-self collision pair "<<noSelfCollision[i].first<<", "<<noSelfCollision[i].second);
 		    return false;
 		  }
 		SafeDelete(selfCollisions(link1,link2));
@@ -1236,13 +1241,13 @@ bool Robot::LoadRob(const char* fn) {
 	  link2 = LinkIndex(selfCollision[i].second.c_str());
 	  if (link1 < 0 || link1 >= (int) links.size() ||
 	      link2 < 0 || link2 >= (int) links.size()) {
-	    printf("   Error, invalid self-collision index %s-%s (range is 0,...,%d)\n",
-		   selfCollision[i].first.c_str(),selfCollision[i].second.c_str(),(int)links.size()-1);
+	    LOG4CXX_ERROR(KrisLibrary::logger(),"   Error, invalid self-collision index "<<selfCollision[i].first.c_str()<<"-"<<
+	    	selfCollision[i].second.c_str()<<" (range is 0,...,"<<(int)links.size()-1 <<")");
 	    return false;
 	  }
 	  if(link1 > link2) Swap(link1,link2);
 	  if(!(link1 < link2)) {
-	    cerr<<"Robot::Load(): Invalid self collision pair "<<selfCollision[i].first<<", "<<selfCollision[i].second<<endl;
+	    LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::Load(): Invalid self collision pair "<<selfCollision[i].first<<", "<<selfCollision[i].second);
 	    return false;
 	  }
 	  InitSelfCollisionPair(link1,link2);
@@ -1254,13 +1259,13 @@ bool Robot::LoadRob(const char* fn) {
 	  link2 = LinkIndex(noSelfCollision[i].second.c_str());
 	  if (link1 < 0 || link1 >= (int) links.size() ||
 	      link2 < 0 || link2 >= (int) links.size()) {
-	    printf("  Error, invalid no-collision index %s-%s (range is 0,...,%d)\n",
-		   noSelfCollision[i].first.c_str(), noSelfCollision[i].second.c_str(),(int)links.size()-1);
+	    LOG4CXX_ERROR(KrisLibrary::logger(),"  Error, invalid no-collision index "<< noSelfCollision[i].first.c_str()<<"-"<<
+	    	noSelfCollision[i].second.c_str()<<" (range is 0,...,"<< (int)links.size()-1<<")");
 	    return false;
 	  }
 	  if(link1 > link2) Swap(link1,link2);
 	  if(!(link1 < link2)) {
-	    cerr<<"Robot::Load(): Invalid no-self collision pair "<<noSelfCollision[i].first<<", "<<noSelfCollision[i].second<<endl;
+	    LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::Load(): Invalid no-self collision pair "<<noSelfCollision[i].first<<", "<<noSelfCollision[i].second);
 	    return false;
 	  }
 	  SafeDelete(selfCollisions(link1,link2));
@@ -1340,11 +1345,11 @@ bool Robot::SaveGeometry(const char* prefix) {
 	for (size_t i = 0; i < links.size(); i++) {
 	  if (!IsGeometryEmpty(i)) {
 		  if(geomFiles[i].empty()) {
-		    cerr<<"Robot::SaveGeometry: warning, link "<<i<<" has empty file name"<<endl;
+		    LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::SaveGeometry: warning, link "<<i<<" has empty file name");
 		    continue;
 		  }
 		  if(!geometry[i]->Save((string(prefix)+geomFiles[i]).c_str())) {
-		       cerr << "Robot::SaveGeometry: Unable to save to geometry file " << string(prefix)+geomFiles[i] << endl;
+		       LOG4CXX_ERROR(KrisLibrary::logger(), "Robot::SaveGeometry: Unable to save to geometry file " << string(prefix)+geomFiles[i] << "");
 		       return false;
 		     }
 		}
@@ -1356,7 +1361,7 @@ bool Robot::Save(const char* fn) {
 	ofstream file;
 	file.open(fn, ios::out);
 	if (!file.is_open()) {
-		cerr << fn << " cannot be opened!" << endl;
+		LOG4CXX_ERROR(KrisLibrary::logger(), fn << " cannot be opened!" << "");
 		file.close();
 		return false;
 	}
@@ -1509,8 +1514,8 @@ bool Robot::Save(const char* fn) {
 					<< joints[i].baseIndex << endl;
 			break;
 		default:
-			cerr << "Unable to save joint type " << (int) joints[i].type
-					<< endl;
+			LOG4CXX_ERROR(KrisLibrary::logger(), "Unable to save joint type " << (int)joints[i].type
+					<< "");
 			return false;
 		}
 	}
@@ -1525,8 +1530,8 @@ bool Robot::Save(const char* fn) {
 			}
 			break;
 		default:
-			cerr << "Unable to save driver type " << (int) drivers[i].type
-					<< endl;
+			LOG4CXX_ERROR(KrisLibrary::logger(), "Unable to save driver type " << (int) drivers[i].type
+					<< "");
 			return false;
 		}
 	}
@@ -1596,8 +1601,7 @@ bool Robot::CheckValid() const {
 		case RobotJoint::Normal:
 		case RobotJoint::Spin:
 			if (matchedLink[joints[i].linkIndex]>=0) {
-				printf("Joint %d controls an already controlled link, %d controlled by %d\n", i,
-				       joints[i].linkIndex,matchedLink[joints[i].linkIndex]);
+				LOG4CXX_INFO(KrisLibrary::logger(),"Joint "<<i<<" controls an already controlled link, "<<joints[i].linkIndex<<" controlled by "<<matchedLink[joints[i].linkIndex] ); 
 				return false;
 			}
 			matchedLink[joints[i].linkIndex] = (int)i;
@@ -1612,12 +1616,11 @@ bool Robot::CheckValid() const {
 			int link = joints[i].linkIndex;
 			while (link != joints[i].baseIndex) {
 				if (link < 0) {
-					printf("Invalid floating chain\n");
+					LOG4CXX_INFO(KrisLibrary::logger(),"Invalid floating chain");
 					return false;
 				}
 				if (matchedLink[link] >= 0) {
-					printf("Joint %d controls an already controlled link, %d controlled by %d\n",
-					       i, link, matchedLink[link]);
+					LOG4CXX_INFO(KrisLibrary::logger(),"Joint "<<i<<" controls an already controlled link, "<<link<<" controlled by "<<matchedLink[link]);
 					return false;
 				}
 				matchedLink[link] = (int)i;
@@ -1625,7 +1628,7 @@ bool Robot::CheckValid() const {
 				numLinks++;
 			}
 			if (numLinks != 6) {
-				printf("Floating joints must have exactly 6 DOF\n");
+				LOG4CXX_INFO(KrisLibrary::logger(),"Floating joints must have exactly 6 DOF");
 				return false;
 			}
 		}
@@ -1635,12 +1638,11 @@ bool Robot::CheckValid() const {
 			int link = joints[i].linkIndex;
 			while (link != joints[i].baseIndex) {
 				if (link < 0) {
-					printf("Invalid floatingplanar chain\n");
+					LOG4CXX_INFO(KrisLibrary::logger(),"Invalid floatingplanar chain");
 					return false;
 				}
 				if (matchedLink[link] >= 0) {
-					printf("Joint %d controls an already controlled link, %d controlled by %d\n",
-					       i, link, matchedLink[link]);
+					LOG4CXX_INFO(KrisLibrary::logger(),"Joint "<<i<<" controls an already controlled link, "<<link<<" controlled by "<<matchedLink[link]);
 					return false;
 				}
 				matchedLink[link] = (int)i;
@@ -1648,7 +1650,7 @@ bool Robot::CheckValid() const {
 				numLinks++;
 			}
 			if (numLinks != 3) {
-				printf("Planar floating joints must have exactly 3 DOF\n");
+				LOG4CXX_INFO(KrisLibrary::logger(),"Planar floating joints must have exactly 3 DOF");
 				return false;
 			}
 		}
@@ -1658,12 +1660,11 @@ bool Robot::CheckValid() const {
 			int link = joints[i].linkIndex;
 			while (link != joints[i].baseIndex) {
 				if (link < 0) {
-					printf("Invalid ballandsocket chain\n");
+					LOG4CXX_INFO(KrisLibrary::logger(),"Invalid ballandsocket chain");
 					return false;
 				}
 				if (matchedLink[link] >= 0) {
-					printf("Joint %d controls an already controlled link, %d controlled by %d\n",
-					       i, link, matchedLink[link]);
+					LOG4CXX_INFO(KrisLibrary::logger(),"Joint "<<i<<" controls an already controlled link, "<<link<<" controlled by "<<matchedLink[link]);
 					return false;
 				}
 				matchedLink[link] = (int)i;
@@ -1671,7 +1672,7 @@ bool Robot::CheckValid() const {
 				numLinks++;
 			}
 			if (numLinks != 3) {
-				printf("Ball-and-socket joints must have exactly 3 DOF\n");
+				LOG4CXX_INFO(KrisLibrary::logger(),"Ball-and-socket joints must have exactly 3 DOF");
 				return false;
 			}
 		}
@@ -1738,7 +1739,7 @@ void Robot::Mount(int link, const Geometry::AnyGeometry3D& mesh,
 		const RigidTransform& T) {
   if(!geometry[link]) {
     if(link >= (int)geomManagers.size()) {
-      printf("Robot::Mount (geometry): Need to add geometry managers?\n");
+      LOG4CXX_INFO(KrisLibrary::logger(),"Robot::Mount (geometry): Need to add geometry managers?");
       geomManagers.resize(geometry.size());
     }
     geomManagers[link].CreateEmpty();
@@ -1757,7 +1758,7 @@ void Robot::Mount(int link, const Geometry::AnyGeometry3D& mesh,
       geomManagers[link].SetUniqueAppearance();
     }
     else {
-      printf("Robot::Mount (geometry): Need to add geometry managers?\n");
+      LOG4CXX_INFO(KrisLibrary::logger(),"Robot::Mount (geometry): Need to add geometry managers?");
       geomManagers.resize(geometry.size());
     }
     geomManagers[link].CreateEmpty();
@@ -1917,7 +1918,7 @@ void Robot::Mount(int link, const Robot& subchain, const RigidTransform& T,const
 				c = c->NextSiblingElement();
 			}
 			if(properties.count("sensors") > 0) {
-				cout<<"Robot::Mount: Adding sensors as children of previous sensors"<<endl;
+				LOG4CXX_INFO(KrisLibrary::logger(),"Robot::Mount: Adding sensors as children of previous sensors");
 				//add sensors onto my sensors
 				TiXmlElement emaster("sensors");
 				stringstream ss1(properties["sensors"]);
@@ -2280,20 +2281,20 @@ void AngVelToEulerAngles(const Vector3& theta, const Vector3& w,
 		Vector3& dtheta) {
 	bool res = EulerAngleDerivative(theta, w, 2, 1, 0, dtheta);
 	if (!res) {
-		fprintf(stderr,
-				"AngVelToEulerAngles: Warning, at singularity of euler angle parameterization, derivative set to zero\n");
+				LOG4CXX_ERROR(KrisLibrary::logger(),
+				"AngVelToEulerAngles: Warning, at singularity of euler angle parameterization, derivative set to zero");
 		dtheta.setZero();
 		return;
 	}
 	if (!IsFinite(theta)) {
-		fprintf(stderr,
-				"AngVelToEulerAngles: Warning, euler angles not finite\n");
+				LOG4CXX_ERROR(KrisLibrary::logger(),
+				"AngVelToEulerAngles: Warning, euler angles not finite");
 		dtheta.setZero();
 		return;
 	}
 	if (!IsFinite(w)) {
-		fprintf(stderr,
-				"AngVelToEulerAngles: Warning, angular velocity is not finite\n");
+				LOG4CXX_ERROR(KrisLibrary::logger(),
+				"AngVelToEulerAngles: Warning, angular velocity is not finite");
 		dtheta.setZero();
 		return;
 	}
@@ -2425,12 +2426,12 @@ bool Robot::LoadURDF(const char* fn)
 	//Get content from the Willow Garage parser
 	std::shared_ptr<urdf::ModelInterface> parser = urdf::parseURDF(s);
 	if(!parser) {
-	  fprintf(stderr,"Robot::LoadURDF: error parsing XML\n");
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::LoadURDF: error parsing XML");
 	  return false;
 	}
 	std::shared_ptr<urdf::Link> root_link = parser->root_link_;
 	if (!root_link) {
-	  fprintf(stderr,"Robot::LoadURDF: Root link is NULL\n");
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(),"Robot::LoadURDF: Root link is NULL");
 	  return false;
 	}
 
@@ -2477,9 +2478,9 @@ bool Robot::LoadURDF(const char* fn)
 	TiXmlDocument xml_doc;
 	bool loaded=xml_doc.LoadFile(fn);
 	if(!loaded) {
-	  fprintf(stderr,"Strange, unable to re-open URDF robot file %s to read klampt XML elements\n",fn);
-	  printf("Press Enter to continue\n");
-	  getchar();
+	  	  LOG4CXX_ERROR(KrisLibrary::logger(),"Strange, unable to re-open URDF robot file "<<fn);
+	  LOG4CXX_INFO(KrisLibrary::logger(),"Press Enter to continue");
+	  //KrisLibrary::loggerWait();
 	}
 	TiXmlElement *robot_xml = xml_doc.FirstChildElement("robot");
 	TiXmlElement *klampt_xml = NULL;
@@ -2555,7 +2556,7 @@ bool Robot::LoadURDF(const char* fn)
 			    }
 			}
 			else {
-				fprintf(stderr,"<klampt> XML tag \"%s\" attribute is not an XML file? Treating as raw XML string\n",prop);
+				LOG4CXX_ERROR(KrisLibrary::logger(),"<klampt> XML tag \""<<prop<<"\" needs to be an external XML file");
 				properties[prop] = value;
 			}
 		}
@@ -2575,7 +2576,7 @@ bool Robot::LoadURDF(const char* fn)
 	    int physicalLink;
 	    Real temp;
 	    if(e->QueryValueAttribute("name",&name) != TIXML_SUCCESS) {
-	      cerr<<"Warning: Xml element robot/klampt/link doesnt have name attribute"<<endl;
+	      LOG4CXX_ERROR(KrisLibrary::logger(),"Warning: Xml element robot/klampt/link doesnt have name attribute");
 	      e = e->NextSiblingElement("link");
 	      continue;
 	    }
@@ -2624,7 +2625,7 @@ bool Robot::LoadURDF(const char* fn)
 		  selfCollision.push_back(pair<string,string>(group1[i],group2[j]));
 	    }
 	    else {
-	      cerr<<"Error, robot/klampt/selfcollision does not contain pairs, or group1 and group2 attributes"<<endl;
+	      LOG4CXX_ERROR(KrisLibrary::logger(),"Error, robot/klampt/selfcollision does not contain pairs, or group1 and group2 attributes");
 	    }	      
 
 
@@ -2652,7 +2653,7 @@ bool Robot::LoadURDF(const char* fn)
 		  noSelfCollision.push_back(pair<string,string>(group1[i],group2[j]));
 	    }
 	    else {
-	      cerr<<"Error, robot/klampt/noselfcollision does not contain pairs, or group1 and group2 attributes"<<endl;
+	      LOG4CXX_ERROR(KrisLibrary::logger(),"Error, robot/klampt/noselfcollision does not contain pairs, or group1 and group2 attributes");
 	    }	      
 
 	    e = e->NextSiblingElement("noselfcollision");
@@ -2671,8 +2672,8 @@ bool Robot::LoadURDF(const char* fn)
 	  //drivers_size: should be joints_size - 1 in ROB file
 
 	  if (joints_size != links_size - 5) {
-	    cout << "joint size:" << joints_size << " and link size:" << links_size
-		 << " do not match for floating-base robot!" << endl;
+	    LOG4CXX_INFO(KrisLibrary::logger(), "joint size:" << joints_size << " and link size:" << links_size
+		 << " do not match for floating-base robot!" << "");
 	    return false;
 	  }
 
@@ -2683,14 +2684,14 @@ bool Robot::LoadURDF(const char* fn)
 	  links_size = (int)parser->links_.size() - 1;
 	  joints_size = (int)parser->joints_.size();
 	  if(joints_size != links_size) {
-	    cout << "joint size:" << joints_size << " and link size:" << links_size
-		 << " do not match for fixed-base robot!" << endl;
+	    LOG4CXX_INFO(KrisLibrary::logger(), "joint size:" << joints_size << " and link size:" << links_size
+		 << " do not match for fixed-base robot!" << "");
 	    return false;
 	  }
 	}
 
-	cout << "Link size: " << links_size << endl;
-	cout << "Joint size: " << joints_size << endl;
+	LOG4CXX_INFO(KrisLibrary::logger(), "Link size: " << links_size << "");
+	LOG4CXX_INFO(KrisLibrary::logger(), "Joint size: " << joints_size << "");
 
 	//Feed the information from parser to required vectors in ROB format
 	//The following vectors have the same dimension of the links vector
@@ -2810,8 +2811,8 @@ bool Robot::LoadURDF(const char* fn)
 		if (i > 0)
 		  this->links[link_index].w.set(linkNode->axis);
 		if(this->links[link_index].w.norm() < 0.1){
-		  cout<<"Axis error: "<<linkNames[link_index]<<";"<<this->links[link_index].w<<endl;
-		  getchar();
+		  LOG4CXX_ERROR(KrisLibrary::logger(),"Axis error: "<<linkNames[link_index]<<";"<<this->links[link_index].w);
+		  //KrisLibrary::loggerWait();
 		}
 
 		//If have inertia specified, then, use the specified inertia
@@ -2939,30 +2940,30 @@ bool Robot::LoadURDF(const char* fn)
 		  fn = path + linkNode->geomName;
 		  if(FileUtils::Exists(fn.c_str())) {
 		    if (!LoadGeometry(link_index, fn.c_str())) {
-		      cout << "Failed loading geometry " << linkNode->geomName
-			   << " for link " << link_index << endl;
+		      LOG4CXX_INFO(KrisLibrary::logger(), "Failed loading geometry " << linkNode->geomName
+			   << " for link " << link_index << "");
 		      //TEMP
-		      cout<< "Temporarily ignoring error..."<<endl;
+		      LOG4CXX_ERROR(KrisLibrary::logger(), "Temporarily ignoring error...");
 		      //return false;
 		    }
 		  }
 		  else if(FileUtils::Exists(geomFiles[link_index].c_str())) {
 		    if (!LoadGeometry(link_index, geomFiles[link_index].c_str())) {
-		      cout << "Failed loading geometry " << linkNode->geomName
-			   << " for link " << link_index << endl;
+		      LOG4CXX_INFO(KrisLibrary::logger(), "Failed loading geometry " << linkNode->geomName
+			   << " for link " << link_index << "");
 		      //TEMP
-		      cout<< "Temporarily ignoring error..."<<endl;
+		      LOG4CXX_ERROR(KrisLibrary::logger(), "Temporarily ignoring error...");
 		      //return false;
 		    }
 		  }
 		  else {
-		    cout << "Could not load geometry " << linkNode->geomName <<", in relative or absolute paths"<<endl;
+		    LOG4CXX_INFO(KrisLibrary::logger(), "Could not load geometry " << linkNode->geomName <<", in relative or absolute paths");
 		    //TEMP
-		    cout<< "Temporarily ignoring error..."<<endl;
+		    LOG4CXX_ERROR(KrisLibrary::logger(), "Temporarily ignoring error...");
 		    //return false;
 		  }
 		  if(this->geometry[link_index]) {
-		    //cout<<"Geometry "<<geomFiles[link_index]<<" has "<<this->geometry[link_index]->NumElements()<<" triangles"<<endl;
+		    //LOG4CXX_INFO(KrisLibrary::logger(),"Geometry "<<geomFiles[link_index]<<" has "<<this->geometry[link_index]->NumElements()<<" triangles");
 		    
 		    //set up color
 		    if(linkNode->link->visual && linkNode->link->visual->material) {
@@ -2995,8 +2996,8 @@ bool Robot::LoadURDF(const char* fn)
 		  link2 = LinkIndex(selfCollision[i].second.c_str());
 		  if (link1 < 0 || link1 >= (int) links.size() ||
 		      link2 < 0 || link2 >= (int) links.size()) {
-		    printf("   Error, invalid self-collision index %s-%s (range is 0,...,%d)\n",
-			   selfCollision[i].first.c_str(),selfCollision[i].second.c_str(),(int)links.size()-1);
+		    LOG4CXX_ERROR(KrisLibrary::logger(),"   Error, invalid self-collision index "<<selfCollision[i].first.c_str()<<"-"<<
+		    	selfCollision[i].second.c_str()<<" (range is 0,...,"<<(int)links.size()-1<<")");
 		    return false;
 		  }
 		  if(link1 == link2) continue;
@@ -3014,8 +3015,8 @@ bool Robot::LoadURDF(const char* fn)
 		  if (link1 < 0 || link1 >= (int) links.size() ||
 		      link2 < 0 || link2 >= (int) links.size()) {
 
-			printf("  Error, invalid no-collision index %s-%s (range is 0,...,%d)\n",
-			       noSelfCollision[i].first.c_str(), noSelfCollision[i].second.c_str(),(int)links.size()-1);
+			LOG4CXX_ERROR(KrisLibrary::logger(),"  Error, invalid no-collision index "<<noSelfCollision[i].first.c_str()<<"-"<< 
+				noSelfCollision[i].second.c_str()<<" (range is 0,...,"<<(int)links.size()-1<<")");
 			return false;
 		}
 		  if(link1 == link2) continue;
@@ -3058,7 +3059,7 @@ void Robot::ComputeLipschitzMatrix() {
 			//compute lipschitz constants for all parents of i
 			Assert(j >= 0 && j < (int) links.size());
 			if (links[j].type == RobotLink3D::Revolute) {
-				//printf("   Link %d contributes %g to lipschitz constant\n",j,cross(links[j].w,s.center).norm()+s.radius);
+				//LOG4CXX_INFO(KrisLibrary::logger(),"   Link "<<j<<" contributes "<<cross(links[j].w,s.center).norm()+s.radius <<" to lipschitz constant");	
 				lipschitz += cross(links[j].w, s.center).norm() + s.radius;
 				//re-bound geometry
 				s.radius = cross(links[j].w, s.center).norm() + s.radius;
@@ -3067,7 +3068,7 @@ void Robot::ComputeLipschitzMatrix() {
 				s.center = links[j].T0_Parent * s.center;
 			} else {
 				if (qMax[j] != qMin[j]) { //normal translation  joint
-					//printf("   Link %d contributes 1 to lipschitz constant\n",j);
+					//LOG4CXX_INFO(KrisLibrary::logger(),"   Link "<<j <<" contributes 1 to lipschitz constant");
 					lipschitz += 1.0;
 					s.radius += qMax[j] - qMin[j];
 					s.center = links[j].T0_Parent * s.center;

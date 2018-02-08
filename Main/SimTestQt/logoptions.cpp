@@ -54,10 +54,10 @@ void LogOptions::AddMeasurement(QString name){
 }
 
 void LogOptions::AddMeasurements(vector<string> names){
-        for(int i =0; i<names.size(); i++){
-            AddMeasurement(QString::fromStdString(names[i]));
-        }
-//    for(vector<string>::iterator it=names.begin();it != names.end();it++){
+       //BOOST_FOREACH(string measurement,names){
+    for(vector<string>::iterator it=names.begin();it != names.end();it++){
+        AddMeasurement(QString::fromStdString(*it));
+    }
 }
 
 void LogOptions::ChangeSensor(int _sensor){

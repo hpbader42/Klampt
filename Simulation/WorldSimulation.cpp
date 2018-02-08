@@ -228,7 +228,7 @@ WorldSimulation::WorldSimulation()
 
 void WorldSimulation::Init(RobotWorld* _world)
 {
-  printf("Creating WorldSimulation\n");
+  LOG4CXX_INFO(GET_LOGGER(WorldSimulator),"Creating WorldSimulation");
   time = 0;
   world = _world;
   odesim.SetGravity(Vector3(0,0,-9.8));
@@ -267,8 +267,8 @@ void WorldSimulation::Init(RobotWorld* _world)
 	  //ODE has problems with joint angles > 2pi
 	  if(robot->qMax(k)-robot->qMin(k) >= TwoPi) {
 	    command.actuators[j].measureAngleAbsolute=false;
-	    printf("WorldSimulation: Link %d (%s) can make complete turn, using relative encoding\n",k,robot->LinkName(k).c_str());
-	  }
+	    LOG4CXX_INFO(GET_LOGGER(WorldSimulator),"WorldSimulation: Link "<<k<<" ("<< robot->LinkName(k).c_str()<<") can make complete turn, using relative encoding");
+    }
 	}
       }
       command.actuators[j].mode = ActuatorCommand::PID;
@@ -278,7 +278,7 @@ void WorldSimulation::Init(RobotWorld* _world)
       command.actuators[j].qdes = robot->GetDriverValue(j);
     }
   }
-  printf("Done.\n");
+  LOG4CXX_INFO(GET_LOGGER(WorldSimulator),"Done.");
 }
 
 void WorldSimulation::OnAddModel()
@@ -315,8 +315,8 @@ void WorldSimulation::OnAddModel()
 	  //ODE has problems with joint angles > 2pi
 	  if(robot->qMax(k)-robot->qMin(k) >= TwoPi) {
 	    command.actuators[j].measureAngleAbsolute=false;
-	    printf("WorldSimulation: Link %d (%s) can make complete turn, using relative encoding\n",k,robot->LinkName(k).c_str());
-	  }
+	    LOG4CXX_INFO(GET_LOGGER(WorldSimulator),"WorldSimulation: Link "<<k<<" ("<<robot->LinkName(k).c_str()<<") can make complete turn, using relative encoding");
+    }
 	}
       }
       command.actuators[j].mode = ActuatorCommand::PID;
@@ -559,7 +559,7 @@ bool WorldSimulation::ReadState(File& f)
 
   READ_FILE_DEBUG(f,time,"WorldSimulation::ReadState");
   if(!odesim.ReadState(f)) {
-    fprintf(stderr,"WorldSimulation::ReadState: ODE sim failed to read\n");
+        LOG4CXX_ERROR(GET_LOGGER(WorldSimulator),"WorldSimulation::ReadState: ODE sim failed to read");
     return false;
   }
   //controlSimulators will read the robotControllers' states
@@ -999,7 +999,7 @@ void SpringHook::Step(Real dt)
   CopyMatrix(R,dBodyGetRotation(body));
   wp = R*localpt+t;
   f = k*(target-wp);
-  //cout<<"Target "<<target<<", world point "<<wp<<", force "<<f<<endl;
+  //LOG4CXX_INFO(GET_LOGGER(WorldSimulator),"Target "<<target<<", world point "<<wp<<", force "<<f<<"");
   dBodyAddForceAtPos(body,f.x,f.y,f.z,wp.x,wp.y,wp.z);
 }
 

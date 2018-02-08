@@ -270,33 +270,14 @@ void ManagedGeometry::RemoveFromCache()
   cacheKey.clear();
 }
 
-void ManagedGeometry::SetUnique()
-{
-  if(cacheKey.empty()) return;
-  SetUniqueAppearance();
-  std::map<std::string,GeometryManager::GeometryList>::iterator i=manager.cache.find(cacheKey);
-  if(i==manager.cache.end()) {
-    LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry::RemoveFromCache(): warning, item "<<cacheKey.c_str());
-    cacheKey.clear();
-    return;
-  }
-  if(i->second.geoms.empty()) {
-    LOG4CXX_WARN(KrisLibrary::logger(),"ManagedGeometry::RemoveFromCache(): warning, item "<<cacheKey.c_str());
-    cacheKey.clear();
-    return;
-  }
-  if(i->second.geoms.size() > 1) {
-    //has duplicates, actually have to copy the geometry and remove this
-    geometry = new Geometry::AnyCollisionGeometry3D(*geometry);
-    OnGeometryChange();
-    RemoveFromCache();
-  }
-}
 
 void ManagedGeometry::TransformGeometry(const Math3D::Matrix4& xform)
 {
   if(geometry) {
-    SetUnique();
+#if CACHE_DEBUG
+    if(!cacheKey.empty())
+      LOG4CXX_INFO(KrisLibrary::logger(),"ManagedGeometry: transforming geometry "<<cacheKey.c_str());
+#endif
     geometry->Transform(xform);
     geometry->ClearCollisionData();
     SetUniqueAppearance();
