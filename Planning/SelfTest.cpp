@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "SelfTest.h"
 #include "RampCSpace.h"
@@ -134,4 +133,5 @@ void TestDynamicShortcutting(SingleRobotCSpace& freeSpace,const ParabolicRamp::D
   ns=path.OnlineShortcut(2.0,0.01,checker);
   LOG4CXX_INFO(KrisLibrary::logger(),"Dynamic shortcutting with window "<<2.0<<" made "<<ns<<" shortcuts, took "<<timer.ElapsedTime());
 }
+
 

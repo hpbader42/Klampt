@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "SplineInterpolate.h"
 
@@ -408,4 +407,3 @@ void MonotonicAccelInterpolate(const vector<Vector>& pts,vector<GeneralizedCubic
     LOG4CXX_INFO(KrisLibrary::logger(),"in "<<temp[0]<<" out "<<temp2[0]<<"\n");
   }
 }
-

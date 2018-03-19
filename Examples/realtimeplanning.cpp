@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "Interface/UserInterface.h"
 #include "Interface/SimulationGUI.h"
@@ -10,7 +9,9 @@
 #include <KrisLibrary/GLdraw/GLScreenshotProgram.h>
 #include <KrisLibrary/utils/StatCollector.h>
 #include <KrisLibrary/GLdraw/drawextra.h>
+#if HAVE_GLUI
 #include <GL/glui.h>
+#endif //HAVE_GLUI - glui isn't used for everything in this file
 #include <fstream>
 using namespace Math3D;
 using namespace GLDraw;
@@ -360,7 +361,7 @@ public:
   }
 };
 
-
+#if HAVE_GLUI
 class GLUIRealTimePlannerGUI : public GLScreenshotProgram<GLUIGUI>
 {
 public:
@@ -429,6 +430,7 @@ bool GLUIRealTimePlannerGUI::OnCommand(const string& cmd,const string& args)
   }
   else return BaseT::OnCommand(cmd,args);
 }
+#endif
 
 int main(int argc, const char** argv)
 {
@@ -442,8 +444,11 @@ int main(int argc, const char** argv)
   if(!backend.LoadAndInitSim(argc,argv)) {
     return 1;
   }
+#if HAVE_GLUI
   GLUIRealTimePlannerGUI gui(&backend,&world);
   gui.SetWindowTitle("Real-time planner");
   gui.Run();
   return 0;
+#endif
+
 }

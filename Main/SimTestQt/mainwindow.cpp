@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -348,5 +347,8 @@ void MainWindow::ShowHelp(){
 
 
 void MainWindow::ShowAbout(){
+    gui->ShowAbout();
+}
+{
     gui->ShowAbout();
 }

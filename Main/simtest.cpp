@@ -1,5 +1,8 @@
 #include "Interface/SimTestGUI.h"
 #include <stdio.h>
+
+#if HAVE_GLUI
+
 int main(int argc,const char** argv)
 {
   RobotWorld world;
@@ -12,3 +15,5 @@ int main(int argc,const char** argv)
   gui.Run();
   return 0;
 }
+
+#endif // HAVE_GLUI

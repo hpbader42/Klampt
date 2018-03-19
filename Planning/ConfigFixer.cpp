@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "ConfigFixer.h"
 
@@ -56,5 +55,4 @@ bool ConfigFixer::Fix(CSpace* space,const Config& q0,Config& q)
   }
   return false;
 }
-
 

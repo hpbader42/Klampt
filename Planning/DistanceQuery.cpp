@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "DistanceQuery.h"
 #include <KrisLibrary/errors.h>
@@ -117,5 +116,4 @@ bool DistanceQuery::ClosestPoints(Vector3& cp1, Vector3& cp2, Vector3& dir)
   }
   return true;
 }
-
 

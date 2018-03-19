@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <QApplication>
 #include <QFileDialog>
@@ -61,5 +60,8 @@ int main(int argc, char *argv[])
 	a.setQuitOnLastWindowClosed(true);
     w.directory=dir;
     w.show();
+    return a.exec();
+}
+);
     return a.exec();
 }

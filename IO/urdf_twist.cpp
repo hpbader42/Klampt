@@ -35,7 +35,6 @@
 /* Author: John Hsu */
 
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "urdf_twist.h"
 #include <fstream>
@@ -80,6 +79,5 @@ bool parseTwist(Twist &twist, TiXmlElement* xml)
 }
 
 }
-
 
 

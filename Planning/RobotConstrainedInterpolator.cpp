@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "RobotConstrainedInterpolator.h"
 
@@ -107,3 +106,4 @@ bool RobotSmoothConstrainedInterpolator::ProjectVelocity(const Config& x,Vector&
   f.activeDofs.Map(vtemp,v);
   return true;
 }
+

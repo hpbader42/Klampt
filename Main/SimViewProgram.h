@@ -1,4 +1,5 @@
-#include <log4cxx/logger.h>
+#if HAVE_GLUI
+//WorldViewPorgram is primarily GLUI based
 #include <KrisLibrary/Logger.h>
 #include "Control/JointSensors.h"
 #include "Control/PathController.h"
@@ -37,7 +38,6 @@ inline PolynomialMotionQueue* GetMotionQueue(RobotController* rc)
   }
   return c;
 }
-
 
 class SimViewProgram : public WorldViewProgram
 {
@@ -660,3 +660,7 @@ void SimViewProgram::DoLogging(const char* fn)
   out<<endl;
   out.close();
 }
+t<<endl;
+  out.close();
+}
+#endif // HAVE GLUI

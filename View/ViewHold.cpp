@@ -101,7 +101,9 @@ void ViewHold::DrawLabel(const char* label)
   pos /= h->contacts.size();
   
   glRasterPos3f(pos.x,pos.y,pos.z);
+#if HAVE_GLUT
   glutBitmapString(GLUT_BITMAP_HELVETICA_18,label);
+#endif //HAVE_GLUT - only use is here
 }
 
 void ViewHold::DrawConstraint(const Hold& h,ViewRobot& robotviewer)

@@ -1,7 +1,6 @@
 #ifndef ROBOT_VIEW_PROGRAM_H
 #define ROBOT_VIEW_PROGRAM_H
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "Modeling/Robot.h"
 #include "Modeling/Environment.h"
@@ -134,6 +133,11 @@ bool RobotViewProgram::ClickRobot(const Ray3D& r,int& body,Vector3& localpt) con
     robot->links[closestBody].T_World.mulInverse(closestPoint,localpt);
   body = closestBody;
   return (closestBody != -1);
+}
+
+
+#endif
+Body != -1);
 }
 
 

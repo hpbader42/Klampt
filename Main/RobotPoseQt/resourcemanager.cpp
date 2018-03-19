@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <resourcemanager.h>
 #include <Modeling/Resources.h>
@@ -504,5 +503,7 @@ ResourceNodePtr ResourceManager::SafePtr(ResourceNode* ptr)
             LOG4CXX_ERROR(KrisLibrary::logger(),"  "<<ptr->parent->children[i]->resource->name.c_str()<<" "<<&*ptr->parent->children[i]->resource);
   }
   AssertNotReached();
+  return NULL;
+}Reached();
   return NULL;
 }

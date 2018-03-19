@@ -1,7 +1,6 @@
 #ifndef REAL_TIME_PLANNER_H
 #define REAL_TIME_PLANNER_H
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "RobotCSpace.h"
 #include "PlannerSettings.h"
@@ -334,3 +333,4 @@ class RealTimePlanningThread
 };
 
 #endif
+

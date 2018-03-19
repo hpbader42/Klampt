@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "RealTimePlanner.h"
 #include "RealTimeIKPlanner.h"
@@ -2401,6 +2400,21 @@ int DynamicHybridTreePlanner::PlanFrom(ParabolicRamp::DynamicPath& path,Real cut
   }
   return Success;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

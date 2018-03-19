@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "dialog.h"
 #include "ui_dialog.h"
@@ -111,4 +110,6 @@ int Dialog::DoCalibrate(){
 motorcalibrate.settings and run \n\
   ./MotorCalibrate motorcalibrate.settings"<<"\n");
   LOG4CXX_INFO(KrisLibrary::logger(),settings<<"\n");
+}
+ogger(),settings<<"\n");
 }

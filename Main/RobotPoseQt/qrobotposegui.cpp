@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "qrobotposegui.h"
 
@@ -117,5 +116,8 @@ void QRobotPoseGUI::SaveFilePrompt(QString directory_key){
       ini.setValue(directory_key,QFileInfo(filename).absolutePath());
     string str = filename.toStdString();
     SendCommand("save_world",str);
+  }
+}
+("save_world",str);
   }
 }

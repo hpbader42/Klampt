@@ -1,5 +1,6 @@
-#include <log4cxx/logger.h>
+#if HAVE_GLUT
 #include <KrisLibrary/Logger.h>
+
 #include "GLUTGUI.h"
 #ifdef __APPLE__
 #include <GLUT/glut.h>
@@ -136,5 +137,4 @@ bool GLUTGUI::OnPauseIdle(double secs)
     SleepIdleCallback(int(secs*1000));
   return true;
 }
-
-
+#endif HAVE_GLUT

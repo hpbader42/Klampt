@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "qrobottestgui.h"
 
@@ -102,4 +101,6 @@ void QRobotTestGUI::ReloadFile()
 {
   if(opened_file.isEmpty()) return;
   SendCommand("reload_file",opened_file.toStdString());
+}
+ned_file.toStdString());
 }

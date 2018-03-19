@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "ManagedGeometry.h"
 #include "IO/ROS.h"
@@ -369,6 +368,3 @@ bool ManagedGeometry::DynamicGeometryUpdate()
   }
   return false;
 }
-
-
-GeometryManager ManagedGeometry::manager;

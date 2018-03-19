@@ -1,7 +1,8 @@
 /** This program provides a user interface for controlling a (real) robot 
  * via the Klamp't socket communication protocol.
  */
-#include <log4cxx/logger.h>
+#if HAVE_GLUI
+//program is primarily glui-based
 #include <KrisLibrary/Logger.h>
 #include "Interface/UserInterface.h"
 #include "Interface/RobotInterface.h"
@@ -471,3 +472,5 @@ int main(int argc, char** argv)
   UserTrialProgram program(&world);
   return program.Run();
 }
+
+#endif

@@ -204,6 +204,7 @@ void ViewPlot::DrawGL()
 
   //draw labels
   char buf[64];
+#if HAVE_GLUT
   void* font=GLUT_BITMAP_HELVETICA_10;
   double h = 10;
   double spacing = 2;
@@ -248,6 +249,6 @@ void ViewPlot::DrawGL()
       glutBitmapString(font,buf);
     }
   }
-
+#endif // HAVE_GLUT
   glEnable(GL_DEPTH_TEST);
 }

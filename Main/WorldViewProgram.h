@@ -3,7 +3,6 @@
 
 #if HAVE_GLUI
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <KrisLibrary/math3d/Ray3D.h>
 #include "Modeling/World.h"
@@ -221,5 +220,4 @@ RigidObject* WorldViewProgram::ClickObject(const Ray3D& r,Vector3& localpt) cons
 }
 
 #endif // HAVE_GLUI
-
 #endif

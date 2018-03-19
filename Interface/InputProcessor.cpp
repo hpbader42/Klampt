@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "InputProcessor.h"
 #include <KrisLibrary/GLdraw/GL.h>
@@ -269,5 +268,4 @@ PlannerObjectiveBase* SerializedObjectiveProcessor::MakeObjective(Robot* robot)
   stringstream ss(payload);
   return LoadPlannerObjective(ss,robot);
 }
-
 

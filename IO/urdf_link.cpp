@@ -35,7 +35,6 @@
 /* Author: Wim Meeussen */
 
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "urdf_parser.h"
 #include "urdf_link.h"
@@ -705,3 +704,4 @@ bool exportLink(Link &link, TiXmlElement* xml)
 }
 
 }
+

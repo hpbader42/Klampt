@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "RobotTimeScaling.h"
 #include "RobotConstrainedInterpolator.h"
@@ -990,3 +989,4 @@ void EvaluateMultiPath(Robot& robot,const MultiPath& path,Real t,Config& q,Real 
     }
   }
 }
+

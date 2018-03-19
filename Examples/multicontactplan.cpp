@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.cpp>
 #include "Planning/StanceCSpace.h"
 #include <KrisLibrary/planning/AnyMotionPlanner.h>
@@ -271,5 +270,8 @@ int main(int argc,const char** argv)
   }
   else 
     path.Save(outputfile);
+  return 0;
+}
+utputfile);
   return 0;
 }

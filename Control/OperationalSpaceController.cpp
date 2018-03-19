@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "OperationalSpaceController.h"
 #include <KrisLibrary/robotics/NewtonEuler.h>

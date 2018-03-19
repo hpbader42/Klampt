@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "three.js.h"
 #include <KrisLibrary/meshing/MeshPrimitives.h>

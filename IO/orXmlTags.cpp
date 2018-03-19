@@ -5,7 +5,6 @@
  *      Author: jingru
  */
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "PrimitiveShape.h"
 #include "orXmlTags.h"

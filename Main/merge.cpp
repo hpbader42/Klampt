@@ -1,7 +1,9 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "WorldViewProgram.h"
 #include "Modeling/GeneralizedRobot.h"
+
+#if HAVE_GLUI
+//WorldViewProgram only uses GLUI currently
 
 int main(int argc,const char** argv)
 {
@@ -23,3 +25,4 @@ int main(int argc,const char** argv)
   out.SaveGeometry("");
   return 0;
 }
+#endif

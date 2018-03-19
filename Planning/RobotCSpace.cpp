@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "RobotCSpace.h"
 #include "Modeling/Interpolate.h"
@@ -965,5 +964,6 @@ EdgePlanner* SingleRigidObjectCSpace::PathChecker(const Config& a,const Config& 
 {
   return new EpsilonEdgeChecker(this,a,b,settings->objectSettings[index].collisionEpsilon);
 }
+
 
 

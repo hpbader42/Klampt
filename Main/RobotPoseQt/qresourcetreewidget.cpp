@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "qresourcetreewidget.h"
 #include <QMessageBox>
@@ -410,4 +409,6 @@ void QResourceTreeWidget::keyPressEvent(QKeyEvent * event)
     onDeletePressed();
   else
     QTreeWidget::keyPressEvent(event);
+}
+t::keyPressEvent(event);
 }

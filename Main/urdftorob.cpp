@@ -4,7 +4,6 @@
  *  Created on: Jun 07, 2013
  *      Author: jingru
  */
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "Modeling/Robot.h"
 #include <string.h>

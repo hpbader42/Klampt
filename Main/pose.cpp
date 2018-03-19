@@ -1,4 +1,4 @@
-#include <log4cxx/logger.h>
+#if HAVE_GLUI
 #include <KrisLibrary/Logger.h>
 #include "ResourceBrowserProgram.h"
 #include "Planning/RobotCSpace.h"
@@ -1118,3 +1118,4 @@ int main(int argc, char** argv)
 
   return program.Run();
 }
+#endif // HAVE_GLUI

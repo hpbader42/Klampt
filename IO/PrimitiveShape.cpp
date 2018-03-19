@@ -4,7 +4,6 @@
  *  Created on: Aug 29, 2012
  *      Author: jingru
  */
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <KrisLibrary/math3d/primitives.h>
 #include "PrimitiveShape.h"

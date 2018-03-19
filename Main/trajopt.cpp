@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "Planning/ConstrainedInterpolator.h"
 #include <KrisLibrary/math3d/primitives.h>

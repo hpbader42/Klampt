@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "SimTestGUI.h"
 #include <KrisLibrary/GLdraw/GLError.h>
@@ -1140,4 +1139,3 @@ bool GLUISimTestGUI::OnCommand(const string& cmd,const string& args)
 
 
 #endif
-

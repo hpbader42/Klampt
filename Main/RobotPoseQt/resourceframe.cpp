@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "resourceframe.h"
 #include "ui_resourceframe.h"
@@ -400,5 +399,8 @@ void ResourceFrame::refreshResources()
 
 void ResourceFrame::SendPathTime(double t){
     gui->SendCommand("set_path_time",t);
+}
+
+nd("set_path_time",t);
 }
 

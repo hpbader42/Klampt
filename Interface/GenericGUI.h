@@ -1,7 +1,6 @@
 #ifndef GENERIC_GUI_H
 #define GENERIC_GUI_H
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <KrisLibrary/utils/AnyCollection.h>
 #include <KrisLibrary/math3d/primitives.h>

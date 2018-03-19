@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "XmlODE.h"
 #include "Control/Controller.h"
@@ -315,4 +314,3 @@ bool XmlSimulationSettings::GetSettings(WorldSimulation& sim)
 
   return true;
 }
-

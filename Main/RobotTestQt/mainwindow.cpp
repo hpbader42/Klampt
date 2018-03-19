@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -245,5 +244,8 @@ MainWindow::~MainWindow()
 {
     delete ui;
     gui = NULL;
+    backend = NULL;
+}
+LL;
     backend = NULL;
 }

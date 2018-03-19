@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "PyController.h"
 #include <KrisLibrary/errors.h>
@@ -464,3 +463,4 @@ bool PyController::SendCommand(const string& name,const string& str)
 
 
 #endif
+

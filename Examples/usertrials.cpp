@@ -1,4 +1,5 @@
-#include <log4cxx/logger.h>
+#if HAVE_GLUI
+//primarily glui-based - uses realtimeprogram
 #include <KrisLibrary/Logger.h>
 #include "Interface/UserInterface.h"
 #include "Interface/RobotInterface.h"
@@ -439,3 +440,4 @@ int main(int argc, char** argv)
   program.LogBegin(params.str());
   return program.Run();
 }
+#endif

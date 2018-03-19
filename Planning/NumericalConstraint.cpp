@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "NumericalConstraint.h"
 #include <KrisLibrary/math/differentiation.h>
@@ -522,5 +521,3 @@ void TorqueLimitConstraint::Eval(const Vector& x,Vector& v)
   }
   v(0) = 1-maxSat;
 }
-
-

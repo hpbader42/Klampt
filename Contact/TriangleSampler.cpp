@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "TriangleSampler.h"
 #include <KrisLibrary/math/sample.h>

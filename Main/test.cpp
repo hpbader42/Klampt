@@ -7,8 +7,10 @@ int main(int argc,const char** argv)
   if(!backend.LoadCommandLine(argc,argv)) {
     return 1;
   }
+#if HAVE_GLUI
   GLUIRobotTestGUI gui(&backend,&world);
   gui.SetWindowTitle("RobotTest");
   gui.Run();
   return 0;
+#endif //HAVE_GLUI
 }

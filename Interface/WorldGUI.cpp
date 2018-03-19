@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "WorldGUI.h"
 #include "IO/ROS.h"

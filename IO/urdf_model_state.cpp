@@ -35,7 +35,6 @@
 /* Author: John Hsu */
 
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "urdf_model_state.h"
 #include <fstream>
@@ -161,5 +160,6 @@ bool parseModelState(ModelState &ms, TiXmlElement* config)
 
 
 }
+
 
 

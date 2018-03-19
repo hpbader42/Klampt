@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "qsimtestgui.h"
 #include <KrisLibrary/utils/apputils.h>
@@ -189,5 +188,8 @@ void QSimTestGUI::ShowAbout(){
       "The main simulation GUI in Klamp't\n"
       "Authors: Jordan Trittel, Kris Hauser";
     about->setText(text);
+    about->show();
+}
+xt);
     about->show();
 }

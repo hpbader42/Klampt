@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "GenericGUI.h"
 #include <KrisLibrary/utils/AnyMapper.h>
@@ -362,5 +361,3 @@ bool CompositeBackend::ProcessMessage(const AnyCollection& msg)
     if(children[i]->ProcessMessage(msg)) return true;
   return false;
 }
-
-

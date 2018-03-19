@@ -1,4 +1,3 @@
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "ContactController.h"
 #include "ForceSensors.h"
@@ -231,4 +230,3 @@ void ContactJointTrackingController::DesiredToAccel(Real dt,const Config& qdes,c
   ddqdes(3) = ddqdes(4) = ddqdes(5) = 0;
   */
 }
-

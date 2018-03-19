@@ -1,5 +1,4 @@
 //these two include files are needed for SimplePlan
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include "Planning/RobotCSpace.h"
   //defines WorldPlannerSettings and SingleRobotCSpace

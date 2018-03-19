@@ -1,7 +1,8 @@
 //This program will read objective functions from a socket via the
 //objective function serialization interface and run real-time planning
 //to avoid obstacles.  The robot will be simulated.
-#include <log4cxx/logger.h>
+#if HAVE_GLUI
+//primarily GLUI based
 #include <KrisLibrary/Logger.h>
 #include "Interface/UserInterface.h"
 #include "Interface/RobotInterface.h"
@@ -344,3 +345,5 @@ int main(int argc, const char** argv)
   program.LoadAndInitSim(argc,argv);
   return program.Run();
 }
+
+#endif//HAVE_GLUI

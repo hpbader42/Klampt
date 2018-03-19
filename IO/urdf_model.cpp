@@ -34,7 +34,6 @@
 
 /* Author: Wim Meeussen */
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <vector>
 #include "urdf_parser.h"
@@ -290,4 +289,5 @@ TiXmlDocument*  exportURDF(std::shared_ptr<ModelInterface> &model)
 
 
 }
+
 

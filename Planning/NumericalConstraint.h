@@ -1,7 +1,6 @@
 #ifndef NUMERICAL_CSPACE_CONSTRAINT_H
 #define NUMERICAL_CSPACE_CONSTRAINT_H
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <KrisLibrary/math/InequalityConstraint.h>
 #include <KrisLibrary/robotics/Stability.h>

@@ -1,7 +1,8 @@
 #ifndef RESOURCE_BROWSER_PROGRAM_H
 #define RESOURCE_BROWSER_PROGRAM_H
 
-#include <log4cxx/logger.h>
+#if HAVE_GLUI
+
 #include <KrisLibrary/Logger.h>
 #include "WorldViewProgram.h"
 #include "Modeling/Resources.h"
@@ -567,3 +568,6 @@ void ResourceBrowserProgram::RenderCurResource()
 
 
 #endif
+
+#endif // have_glui
+//most of this uses glui

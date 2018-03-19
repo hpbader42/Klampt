@@ -1,7 +1,6 @@
 #ifndef GL_SCREENSHOT_PLUGIN_H
 #define GL_SCREENSHOT_PLUGIN_H
 
-#include <log4cxx/logger.h>
 #include <KrisLibrary/Logger.h>
 #include <KrisLibrary/utils/stringutils.h>
 #include <KrisLibrary/Timer.h>
@@ -113,6 +112,13 @@ public:
 	  lastScreenshotTime += frameTime;
 	}
       }
+    }
+  }
+};
+
+
+#endif
+
     }
   }
 };
