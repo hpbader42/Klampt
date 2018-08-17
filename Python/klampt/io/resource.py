@@ -89,6 +89,9 @@ extensionToType = {'.config':'Config',
                    '.tri':'Geometry3D',
                    '.off':'Geometry3D',
                    '.stl':'Geometry3D',
+                   '.ply':'Geometry3D',
+                   '.wrl':'Geometry3D',
+                   '.dae':'Geometry3D',
                    '.poly':'Geometry3D',
                    '.geom':'Geometry3D',
                    '.pcd':'Geometry3D',
@@ -102,9 +105,18 @@ extensionToType = {'.config':'Config',
 
 typeToExtension = dict((v,k) for (k,v) in extensionToType.items())
 
+def knownExtensions():
+    """Returns all known file extensions"""
+    return extensionToType.keys()
+
 def knownTypes():
     """Returns all known types"""
-    return extensionToType.keys()
+    return typeToExtension.keys()
+
+def visualEditTypes():
+    """Returns types that can be visually edited"""
+    return ['Config','Configs','Trajectory','Vector3','Point','RigidTransform','Rotation','WorldModel']
+
 
 def filenameToType(name):
     fileName, fileExtension = os.path.splitext(name)
@@ -179,7 +191,13 @@ def get(name,type='auto',directory=None,default=None,doedit='auto',description=N
         fn = os.path.join(directory,name)
         try:
             if type == 'xml':
-                raise NotImplementedError("TODO: load xml files from Python API")
+                value = WorldModel()
+                res = value.readFile(fn)
+                if not res:
+                    try:
+                        value = loader.load('MultiPath',fn)
+                    except Exception as e:
+                        raise
             elif type == 'json':
                 f = open(fn,'r')
                 text = ''.join(f.readlines())
@@ -235,7 +253,9 @@ def set(name,value,type='auto',directory=None):
     fn = os.path.join(directory,name)
     _ensure_dir(fn)
     if type == 'xml':
-        raise NotImplementedError("TODO: save xml files from Python API")
+        if hasattr(value,'saveFile'):
+            return value.saveFile(fn)
+        raise NotImplementedError("TODO: save other xml files from Python API")
     elif type == 'json':
         f = open(fn,'w')
         f.write(loader.toJson(value,type=type))
@@ -276,13 +296,13 @@ class FileGetter:
                 pattern = desc + " ("
                 pattern = pattern + ' '.join("*"+ext for ext in exts) + ")"
                 patternlist.append(pattern)
-            #print patternlist
+            #print "Pattern list:",patternlist
             patterns = ";;".join(patternlist)
         self.result = QFileDialog.getSaveFileName(None, self.title, self.directory, patterns)
 
 def load(type=None,directory=None):
     """Asks the user to open a resource file of a given type.  If type is not given, all resource file types
-    are given as options.  Returns a (filename,value) pair"""
+    are given as options.  Returns a (filename,value) pair, or None if the operation was canceled"""
     
     fg = FileGetter('Open resource')
     fg.directory = directory
@@ -312,9 +332,8 @@ def load(type=None,directory=None):
     vis.setWindow(old_window)
     if len(fg.result) == 0:
         return None
-    if type == None:
-        return get(str(fg.result),'auto',directory,doedit=False)
-    return str(fg.result),get(str(fg.result),type,'',doedit=False)
+    fn = str(fg.result)
+    return fn,get(fn,('auto' if type is None else type),'',doedit=False)
 
 def save(value,type='auto',directory=None):
     """Asks the user to save the given resource to a file of the correct type.  If type='auto', the type
@@ -333,6 +352,7 @@ def save(value,type='auto',directory=None):
             if v == type:
                 extensions.append(k)
         extensions.append('.json')
+        print "Available extensions for objects of type",type,":",extensions
         fg.filetypes.append((type,extensions))
 
     def make_getfilename(glbackend):
@@ -600,28 +620,30 @@ def edit(name,value,type='auto',description=None,editor='visual',world=None,refe
                 editor.disableTranslation()
             #attach visualization items to the transform
             if isinstance(referenceObject,RobotModelLink):
-                assert frame.index >= 0
-                r = frame.robot()
+                assert referenceObject.index >= 0
+                r = referenceObject.robot()
                 descendant = [False]*r.numLinks()
-                descendant[frame.index] = True
+                descendant[referenceObject.index] = True
                 for i in xrange(r.numLinks()):
                     p = r.link(i).getParent()
                     if p >= 0 and descendant[p]: descendant[i]=True
                 for i in xrange(r.numLinks()):
                     if descendant[i]:
                         editor.attach(r.link(i))
-                editor.attach(frame)
+                editor.attach(referenceObject)
             elif hasattr(referenceObject,'getTransform'):
                 editor.attach(referenceObject)
             elif hasattr(referenceObject,'__iter__'):
                 for i in referenceObject:
-                    editor.attach(referenceObject)
+                    editor.attach(i)
             #Run!
             if type == 'Rotation':
                 #convert from se3 to so3
                 return vis.editors.run(editor)[0]
             else:
                 return vis.editors.run(editor)
+        elif type == 'WorldModel':
+            return vis.editors.run(vis.editors.WorldEditor(name,value,description))
         else:
             raise RuntimeError("Visual editing of objects of type "+type+" not supported yet")
     else:

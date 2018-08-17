@@ -1,8 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6.4)
 PROJECT( Klampt )
 
-
-
 # version (e.g. for packaging)
 set(KLAMPT_MAJOR_VERSION 0)
 set(KLAMPT_MINOR_VERSION 7)
@@ -33,19 +31,19 @@ INCLUDE(CompilerSettings)
 SET( BASE_DIR ${CMAKE_BINARY_DIR} )
 SET( CMAKE_LIBRARY_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
 SET( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${BASE_DIR}/lib )
-SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR} )
+SET( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BASE_DIR}/bin )
 
-set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}")
+set(INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/Cpp")
 INCLUDE_DIRECTORIES(${INCLUDE_DIRS})
 
 LINK_DIRECTORIES(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 # define the Klamp't library subdirectories in the SUBDIRS variable
-SET(SUBDIRS Contact Control IO Interface Modeling Planning Simulation View)
+SET(SUBDIRS Contact Control IO Interface Modeling Planning Sensing Simulation View)
 
 # Get all compilation files in subdirectories
 foreach(s ${SUBDIRS})
-  file(GLOB SUBDIR_SRCS  ${PROJECT_SOURCE_DIR}/${s}/*.cpp )
+  file(GLOB SUBDIR_SRCS  ${PROJECT_SOURCE_DIR}/Cpp/${s}/*.cpp )
   SET(Klampt_SRCS ${Klampt_SRCS} ${SUBDIR_SRCS})
   SET(Klampt_${s}_SRCS ${SUBDIR_SRCS})
 endforeach(s)
@@ -69,9 +67,9 @@ SET(KLAMPT_INCLUDE_DIRS ${KLAMPT_INCLUDE_DIRS} CACHE STRING "Klamp't include dir
 SET(KLAMPT_DEFINITIONS ${KLAMPT_DEFINITIONS} CACHE STRING "Klamp't compiler definitions" FORCE)
 SET(KLAMPT_LIBRARIES ${KLAMPT_LIBRARIES} CACHE STRING "Klamp't link libraries" FORCE)
 
-#add Klamp't onto KLAMPT_LIBRARIES
+#add Klamp't onto KLAMPT_LIBRARIES, add Klampt/Cpp onto KLAMPT_INCLUDE_DIRS
 SET(KLAMPT_LIBRARIES Klampt ${KLAMPT_LIBRARIES})
-SET(KLAMPT_INCLUDE_DIRS ${KLAMPT_INCLUDE_DIRS} ${KLAMPT_ROOT})
+SET(KLAMPT_INCLUDE_DIRS ${KLAMPT_INCLUDE_DIRS} ${KLAMPT_ROOT}/Cpp)
 
 #needed for python build
 IF(WIN32)
@@ -80,9 +78,14 @@ ELSE(WIN32)
   SET(KLAMPT_ABSOLUTE_LIBRARIES ${CMAKE_BINARY_DIR}/lib/libKlampt.lib ${KLAMPT_LIBRARIES})
 ENDIF(WIN32)
 
-MESSAGE("CMAKE compiler: " ${CMAKE_CXX_COMPILER})
-MESSAGE("CMAKE flags: " ${CMAKE_CXX_FLAGS})
-MESSAGE("CMAKE version: " ${CMAKE_VERSION})
+####### Copy headers from Cpp/* to include/Klampt/* #######
+MESSAGE("Copying C++ headers to include/Klampt/*")
+foreach(s ${SUBDIRS})
+  file(GLOB KLAMPT_SUBDIR_HEADERS
+    "${PROJECT_SOURCE_DIR}/Cpp/${s}/*.h"
+  )
+  file(COPY ${KLAMPT_SUBDIR_HEADERS} DESTINATION include/Klampt/${s}/)
+endforeach(s)
 
 ####### Klamp't Applications #########
 IF(NOT USE_QT5_APPS)
@@ -109,16 +112,16 @@ IF(NOT USE_QT5_APPS AND NOT USE_QT4_APPS)
   ENDIF(QT4_FOUND)
 ENDIF(NOT USE_QT5_APPS AND NOT USE_QT4_APPS)
 
-ADD_SUBDIRECTORY(Main)
+ADD_SUBDIRECTORY(Cpp/Main)
 
 ####### Klamp't Examples #########
-ADD_SUBDIRECTORY(Examples)
+ADD_SUBDIRECTORY(Cpp/Examples)
 
 ####### Klamp't Documentation #########
 FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
-  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.conf.in ${CMAKE_CURRENT_BINARY_DIR}/doxygen.conf @ONLY)
-  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doxygen.conf
+  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doxygen.conf.in ${CMAKE_CURRENT_BINARY_DIR}/Documentation/doxygen.conf @ONLY)
+  ADD_CUSTOM_TARGET(docs ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Documentation/doxygen.conf
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
     COMMENT "Generating documentation (Doxygen) at location ${PROJECT_SOURCE_DIR}/doc/html/")
 ENDIF(DOXYGEN_FOUND)
@@ -144,7 +147,7 @@ install(TARGETS Klampt
   DESTINATION lib
   COMPONENT libraries)
 foreach(s ${SUBDIRS})
-  file(GLOB SUBDIRFILES  ${PROJECT_SOURCE_DIR}/${s}/*.h )
+  file(GLOB SUBDIRFILES  ${PROJECT_SOURCE_DIR}/Cpp/${s}/*.h )
   install(FILES ${SUBDIRFILES}
     DESTINATION include/Klampt/${s}
     COMPONENT headers)

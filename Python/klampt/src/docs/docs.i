@@ -175,6 +175,16 @@ Returns constraint testing statistics. If adaptive queries are
 enabled, this returns the stats on each constraint. ";
 
 
+// File: classDistanceQueryResult.xml
+%feature("docstring") DistanceQueryResult "";
+
+
+// File: classDistanceQuerySettings.xml
+%feature("docstring") DistanceQuerySettings "";
+
+%feature("docstring")  DistanceQuerySettings::DistanceQuerySettings "";
+
+
 // File: classGeneralizedIKObjective.xml
 %feature("docstring") GeneralizedIKObjective "
 
@@ -292,12 +302,14 @@ A three-D geometry. Can either be a reference to a world item's
 geometry, in which case modifiers change the world item's geometry, or
 it can be a standalone geometry.
 
-There are four currently supported types of geometry: primitives (
+There are five currently supported types of geometry: primitives (
 GeometricPrimitive)
 
 triangle meshes ( TriangleMesh)
 
 point clouds ( PointCloud)
+
+volumetric grids ( VolumeGrid)
 
 groups (Group) This class acts as a uniform container of all of these
 types.
@@ -335,6 +347,8 @@ C++ includes: geometry.h ";
 
 %feature("docstring")  Geometry3D::Geometry3D "";
 
+%feature("docstring")  Geometry3D::Geometry3D "";
+
 %feature("docstring")  Geometry3D::~Geometry3D "";
 
 %feature("docstring")  Geometry3D::clone "
@@ -355,7 +369,7 @@ Frees the data associated with this geometry, if standalone. ";
 
 %feature("docstring")  Geometry3D::type "
 
-Returns the type of geometry: TriangleMesh, PointCloud, or
+Returns the type of geometry: TriangleMesh, PointCloud, VolumeGrid, or
 GeometricPrimitive. ";
 
 %feature("docstring")  Geometry3D::empty "
@@ -376,6 +390,10 @@ Returns a PointCloud if this geometry is of type PointCloud. ";
 Returns a GeometricPrimitive if this geometry is of type
 GeometricPrimitive. ";
 
+%feature("docstring")  Geometry3D::getVolumeGrid "
+
+Returns a VoumeGrid if this geometry is of type VolumeGrid. ";
+
 %feature("docstring")  Geometry3D::setTriangleMesh "
 
 Sets this Geometry3D to a TriangleMesh. ";
@@ -388,20 +406,26 @@ Sets this Geometry3D to a PointCloud. ";
 
 Sets this Geometry3D to a GeometricPrimitive. ";
 
+%feature("docstring")  Geometry3D::setVolumeGrid "
+
+Sets this Geometry3D to a volumeGrid. ";
+
 %feature("docstring")  Geometry3D::setGroup "
 
 Sets this Geometry3D to a group geometry. To add sub-geometries,
-repeatedly call setElement() ";
+repeatedly call setElement() with increasing indices. ";
 
 %feature("docstring")  Geometry3D::getElement "
 
-Returns an element of the Geometry3D if it is a group. Raises an error
-if this is of any other type. ";
+Returns an element of the Geometry3D if it is a Group, TriangleMesh,
+or PointCloud. The element will be in local coordinates. Raises an
+error if this is of any other type. ";
 
 %feature("docstring")  Geometry3D::setElement "
 
-Sets an element of the Geometry3D if it is a group. Raises an error if
-this is of any other type. ";
+Sets an element of the Geometry3D if it is a Group, TriangleMesh, or
+PointCloud. The element will be in local coordinates. Raises an error
+if this is of any other type. ";
 
 %feature("docstring")  Geometry3D::numElements "
 
@@ -470,6 +494,23 @@ but may not be tight. ";
 Returns a tighter axis-aligned bounding box of the object than getBB.
 Worst case O(n) time. ";
 
+%feature("docstring")  Geometry3D::convert "
+
+Converts a geometry to another type, if a conversion is available. The
+interpretation of param depends on the type of conversion, with 0
+being a reasonable default. Available conversions are: TriangleMesh ->
+PointCloud. param is the desired dispersion of the points, by default
+set to the average triangle diameter. At least all of the mesh's
+vertices will be returned. TriangleMesh -> VolumeGrid, with good
+results only if the mesh is watertight. param is the grid resolution,
+by default set to the average triangle diameter. PointCloud ->
+TriangleMesh, if the point cloud is structured. param is the threshold
+for splitting triangles by depth discontinuity, by default infinity.
+GeometricPrimitive -> anything. param determines the desired
+resolution. VolumeGrid -> TriangleMesh. param determines the level set
+for the marching cubes algorithm. VolumeGrid -> PointCloud. param
+determines the level set. ";
+
 %feature("docstring")  Geometry3D::collides "
 
 Returns true if this geometry collides with the other. ";
@@ -478,15 +519,51 @@ Returns true if this geometry collides with the other. ";
 
 Returns true if this geometry is within distance tol to other. ";
 
+%feature("docstring")  Geometry3D::distance_simple "
+
+Version 0.8: this is the same as the old distance() function.
+
+Returns the distance from this geometry to the other. If either
+geometry contains volume information, this value may be negative to
+indicate penetration. ";
+
+%feature("docstring")  Geometry3D::distance_point "
+
+Returns the the distance and closest point to the input point, given
+in world coordinates. An exception is raised if this operation is not
+supported with the given geometry type.
+
+The return value contains the distance, closest points, and gradients
+if available. ";
+
+%feature("docstring")  Geometry3D::distance_point_ext "
+
+A customizable version of distance_point. The settings for the
+calculation can be customized with relErr, absErr, and upperBound,
+e.g., to break if the closest points are at least upperBound distance
+from one another. ";
+
 %feature("docstring")  Geometry3D::distance "
 
-Returns the distance from this geometry to the other. ";
+Returns the the distance and closest points between the given
+geometries.
 
-%feature("docstring")  Geometry3D::closestPoint "
+If the objects are penetrating, some combinations of geometry types
+allow calculating penetration depths (GeometricPrimitive-
+GeometricPrimitive, GeometricPrimitive-TriangleMesh (surface only),
+GeometricPrimitive-PointCloud, GeometricPrimitive-VolumeGrid,
+TriangleMesh (surface only)- GeometricPrimitive, PointCloud-
+VolumeGrid). In this case, a negative value is returned and cp1,cp2
+are the deepest penetrating points.
 
-Returns (success,cp) giving the closest point to the input point.
-success is false if that operation is not supported with the given
-geometry type. cp are given in world coordinates. ";
+Same comments as the distance_point function ";
+
+%feature("docstring")  Geometry3D::distance_ext "
+
+A customizable version of distance. The settings for the calculation
+can be customized with relErr, absErr, and upperBound, e.g., to break
+if the closest points are at least upperBound distance from one
+another. ";
 
 %feature("docstring")  Geometry3D::rayCast "
 
@@ -2369,6 +2446,28 @@ Transforms all the vertices by the rigid transform v=R*v+t. ";
 %feature("docstring")  Viewport::getRigidTransform "";
 
 
+// File: classVolumeGrid.xml
+%feature("docstring") VolumeGrid "
+
+An axis-aligned volumetric grid, typically a signed distance transform
+with > 0 indicating outside and < 0 indicating inside. Can also store
+an occupancy grid.
+
+C++ includes: geometry.h ";
+
+%feature("docstring")  VolumeGrid::setBounds "";
+
+%feature("docstring")  VolumeGrid::resize "";
+
+%feature("docstring")  VolumeGrid::set "";
+
+%feature("docstring")  VolumeGrid::set "";
+
+%feature("docstring")  VolumeGrid::get "";
+
+%feature("docstring")  VolumeGrid::shift "";
+
+
 // File: classWidget.xml
 %feature("docstring") Widget "";
 
@@ -2885,6 +2984,10 @@ Sets the random seed used by the motion planner. ";
 %feature("docstring")  GetPointCloud "";
 
 %feature("docstring")  GetPointCloud "";
+
+%feature("docstring")  GetVolumeGrid "";
+
+%feature("docstring")  GetVolumeGrid "";
 
 %feature("docstring")  copy "";
 
