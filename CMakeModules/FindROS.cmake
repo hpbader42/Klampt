@@ -54,13 +54,14 @@ ELSE(NOT ROS_FOUND)
     FIND_LIBRARY(${NAME}_LIB NAMES ${NAME} PATHS ${ROS_PATH}/lib)
     LIST(APPEND ROS_LIBRARIES ${${NAME}_LIB})
   ENDFOREACH(NAME)
-  #Now that we're not using BOOST by default, boost_system is needed to use ROS libraries
-  FIND_LIBRARY(BOOST_SYSTEM_LIBRARY NAMES boost_system)
-  LIST(APPEND ROS_LIBRARIES ${BOOST_SYSTEM_LIBRARY})
   MESSAGE(STATUS "ROS dependencies ${ROSDEPS} need the following libraries:")
   FOREACH(NAME ${ROS_LIBRARIES})
     MESSAGE(STATUS "  " ${NAME})
   ENDFOREACH(NAME)
+
+  MESSAGE(STATUS "ROS will also need Boost libraries...")
+  find_library (BOOST_SYSTEM_LIB "boost_system")
+  LIST(APPEND ROS_LIBRARIES ${BOOST_SYSTEM_LIB})
 ENDIF(NOT ROS_FOUND)
 MARK_AS_ADVANCED(ROS_LIBRARIES)
 

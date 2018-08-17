@@ -136,14 +136,66 @@ struct GeometricPrimitive
   std::vector<double> properties;
 };
 
+/** @brief An axis-aligned volumetric grid, typically a signed distance transform with > 0 
+ * indicating outside and < 0 indicating inside.  Can also store an occupancy grid.
+ */
+class VolumeGrid
+{
+public:
+  void setBounds(const double bmin[3],const double bmax[3]);
+  void resize(int sx,int sy,int sz);
+  void set(double value);
+  void set(int i,int j,int k,double value);
+  double get(int i,int j,int k);
+  void shift(double dv);
+
+  std::vector<double> bbox; //xmin,ymin,zmin,xmax,ymax,zmax
+  std::vector<int> dims; //size in each of 3 dimensions
+  std::vector<double> values;  //triple index (i,j,k) is flattened to i*dims[1]*dims[2] + j*dims[2] + k
+};
+
+class DistanceQuerySettings
+{
+public:
+  DistanceQuerySettings();
+  ///Allows a relative error in the distance calculation to speed up calculation.
+  ///The calculated result is Dcalc <= D(1+relErr) + absErr
+  double relErr;
+  ///Allows an absolute error in the distance calculation to speed up calculation.
+  ///The calculated result is Dcalc <= D(1+relErr) + absErr
+  double absErr;
+  ///If given, if the lowest distance is >= than this upper bound, the calculation may
+  ///branch.
+  double upperBound;
+};
+
+class DistanceQueryResult
+{
+public:
+  ///The calculated distance, with negative values indicating penetration.  Can also
+  ///be upperBound if the branch was hit.
+  double d;
+  ///If true, the closest point information is given in cp0 and cp1
+  bool hasClosestPoints;
+  ///If true, distance gradient information is given in grad0 and grad1
+  bool hasGradients;
+  ///closest points on self vs other, in world coordinates
+  std::vector<double> cp1,cp2;
+  ///the gradients of the objects' distance fields, in world coordinates. 
+  ///I.e., to move object1 to touch object2, move it in direction grad1 by distance -d. 
+  ///Note that grad2 is always -grad1.
+  std::vector<double> grad1,grad2;
+};
+
 /** @brief A three-D geometry.  Can either be a reference to a
  * world item's geometry, in which case modifiers change the 
  * world item's geometry, or it can be a standalone geometry.
  *
- * There are four currently supported types of geometry:
+ * There are five currently supported types of geometry:
  * - primitives (GeometricPrimitive)
  * - triangle meshes (TriangleMesh)
  * - point clouds (PointCloud)
+ * - volumetric grids (VolumeGrid)
  * - groups (Group)
  * This class acts as a uniform container of all of these types.
  *
@@ -176,6 +228,7 @@ class Geometry3D
   Geometry3D(const GeometricPrimitive&);
   Geometry3D(const TriangleMesh&);
   Geometry3D(const PointCloud&);
+  Geometry3D(const VolumeGrid&);
   ~Geometry3D();
   const Geometry3D& operator = (const Geometry3D& rhs);
   ///Creates a standalone geometry from this geometry
@@ -186,7 +239,7 @@ class Geometry3D
   bool isStandalone();
   ///Frees the data associated with this geometry, if standalone 
   void free();
-  ///Returns the type of geometry: TriangleMesh, PointCloud, or
+  ///Returns the type of geometry: TriangleMesh, PointCloud, VolumeGrid, or
   ///GeometricPrimitive
   std::string type();
   ///Returns true if this has no contents (not the same as numElements()==0)
@@ -197,20 +250,26 @@ class Geometry3D
   PointCloud getPointCloud();
   ///Returns a GeometricPrimitive if this geometry is of type GeometricPrimitive
   GeometricPrimitive getGeometricPrimitive();
+  ///Returns a VoumeGrid if this geometry is of type VolumeGrid
+  VolumeGrid getVolumeGrid();
   ///Sets this Geometry3D to a TriangleMesh
   void setTriangleMesh(const TriangleMesh&);
   ///Sets this Geometry3D to a PointCloud
   void setPointCloud(const PointCloud&);
   ///Sets this Geometry3D to a GeometricPrimitive
   void setGeometricPrimitive(const GeometricPrimitive&);
+  ///Sets this Geometry3D to a volumeGrid
+  void setVolumeGrid(const VolumeGrid&);
   ///Sets this Geometry3D to a group geometry.  To add sub-geometries, repeatedly call
-  ///setElement()
+  ///setElement() with increasing indices.
   void setGroup();
-  ///Returns an element of the Geometry3D if it is a group.  Raises an error if this
-  ///is of any other type.
+  ///Returns an element of the Geometry3D if it is a Group, TriangleMesh, or PointCloud.
+  ///The element will be in local coordinates.
+  ///Raises an error if this is of any other type.  
   Geometry3D getElement(int element);
-  ///Sets an element of the Geometry3D if it is a group.  Raises an error if this is
-  ///of any other type.  
+  ///Sets an element of the Geometry3D if it is a Group, TriangleMesh, or PointCloud. 
+  ///The element will be in local coordinates.
+  ///Raises an error if this is of any other type.  
   void setElement(int element,const Geometry3D& data);
   ///Returns the number of sub-elements in this geometry
   int numElements();
@@ -249,17 +308,52 @@ class Geometry3D
   void getBB(double out[3],double out2[3]);
   ///Returns a tighter axis-aligned bounding box of the object than getBB. Worst case O(n) time.
   void getBBTight(double out[3],double out2[3]);
+  ///Converts a geometry to another type, if a conversion is available.  The interpretation
+  ///of param depends on the type of conversion, with 0 being a reasonable default.
+  ///Available conversions are:
+  ///   TriangleMesh -> PointCloud.  param is the desired dispersion of the points, by default set
+  ///      to the average triangle diameter.  At least all of the mesh's vertices will be returned.
+  ///   TriangleMesh -> VolumeGrid, with good results only if the mesh is watertight. 
+  ///      param is the grid resolution, by default set to the average triangle diameter.
+  ///   PointCloud -> TriangleMesh, if the point cloud is structured. param is the threshold for
+  ///      splitting triangles by depth discontinuity, by default infinity.
+  ///   GeometricPrimitive -> anything.  param determines the desired resolution.
+  ///   VolumeGrid -> TriangleMesh.  param determines the level set for the marching cubes algorithm.
+  ///   VolumeGrid -> PointCloud.  param determines the level set.
+  Geometry3D convert(const char* type,double param=0);
   ///Returns true if this geometry collides with the other
   bool collides(const Geometry3D& other);
   ///Returns true if this geometry is within distance tol to other
   bool withinDistance(const Geometry3D& other,double tol);
-  ///Returns the distance from this geometry to the other
-  double distance(const Geometry3D& other,double relErr=0,double absErr=0);
-  ///Returns (success,cp) giving the closest point to the input point.
-  ///success is false if that operation is not supported with the given
+  ///Version 0.8: this is the same as the old distance() function.
+  ///
+  ///Returns the distance from this geometry to the other.  If either geometry contains volume information,
+  ///this value may be negative to indicate penetration.
+  double distance_simple(const Geometry3D& other,double relErr=0,double absErr=0);
+  ///Returns the the distance and closest point to the input point, given in world coordinates.
+  ///An exception is raised if this operation is not supported with the given
   ///geometry type.
-  ///cp are given in world coordinates.
-  bool closestPoint(const double pt[3],double out[3]);
+  ///
+  ///The return value contains the distance, closest points, and gradients if available.
+  DistanceQueryResult distance_point(const double pt[3]);
+  ///A customizable version of distance_point.
+  ///The settings for the calculation can be customized with relErr, absErr, and upperBound, e.g., to
+  ///break if the closest points are at least upperBound distance from one another.  
+  DistanceQueryResult distance_point_ext(const double pt[3],const DistanceQuerySettings& settings);
+  ///Returns the the distance and closest points between the given geometries.
+  ///
+  ///If the objects are penetrating, some combinations of geometry types allow calculating penetration
+  ///depths (GeometricPrimitive-GeometricPrimitive, GeometricPrimitive-TriangleMesh (surface only),
+  ///GeometricPrimitive-PointCloud, GeometricPrimitive-VolumeGrid, TriangleMesh (surface only)-
+  ///GeometricPrimitive, PointCloud-VolumeGrid).  In this case, a negative value is returned and cp1,cp2
+  ///are the deepest penetrating points.
+  ///
+  ///Same comments as the distance_point function
+  DistanceQueryResult distance(const Geometry3D& other);
+  ///A customizable version of distance.
+  ///The settings for the calculation can be customized with relErr, absErr, and upperBound, e.g., to
+  ///break if the closest points are at least upperBound distance from one another.  
+  DistanceQueryResult distance_ext(const Geometry3D& other,const DistanceQuerySettings& settings);
   ///Returns (hit,pt) where hit is true if the ray starting at s and pointing
   ///in direction d hits the geometry (given in world coordinates); pt is
   ///the hit point, in world coordinates.
