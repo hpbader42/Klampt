@@ -1,7 +1,4 @@
-<<<<<<< HEAD:Planning/ConfigFixer.cpp
 #include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Planning/ConfigFixer.cpp
 #include "ConfigFixer.h"
 
 ConfigFixer::ConfigFixer()

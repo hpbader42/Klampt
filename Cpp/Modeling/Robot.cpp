@@ -1,9 +1,6 @@
-<<<<<<< HEAD:Modeling/Robot.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Modeling/Robot.cpp
 #include "Robot.h"
 #include "Mass.h"
+#include <KrisLibrary/Logger.h>
 #include <KrisLibrary/utils/stringutils.h>
 #include <KrisLibrary/utils/arrayutils.h>
 #include <string.h>

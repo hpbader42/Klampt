@@ -1,8 +1,5 @@
-<<<<<<< HEAD:Modeling/Terrain.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Modeling/Terrain.cpp
 #include "Terrain.h"
+#include <KrisLibrary/Logger.h>
 #include <KrisLibrary/Timer.h>
 #include <KrisLibrary/meshing/IO.h>
 #include <KrisLibrary/utils/SimpleFile.h>

@@ -1,7 +1,3 @@
-<<<<<<< HEAD:Control/PathController.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Control/PathController.cpp
 #include "PathController.h"
 #include "Sensing/JointSensors.h"
 #include "Modeling/Conversions.h"

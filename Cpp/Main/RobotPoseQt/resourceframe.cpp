@@ -1,7 +1,3 @@
-<<<<<<< HEAD:Main/RobotPoseQt/resourceframe.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Main/RobotPoseQt/resourceframe.cpp
 #include "resourceframe.h"
 #include "ui_resourceframe.h"
 #include "configsframe.h"

@@ -35,16 +35,13 @@
 /* Author: Wim Meeussen, John Hsu */
 
 
-<<<<<<< HEAD:IO/urdf_pose.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/IO/urdf_pose.cpp
 #include "urdf_pose.h"
 #include <fstream>
 #include <sstream>
 #include <algorithm>
 #include <tinyxml.h>
 #include "urdf_parser.h"
+#include <KrisLibrary/Logger.h>
 
 namespace urdf_export_helpers {
 

@@ -1,10 +1,6 @@
 #ifndef GL_SCREENSHOT_PLUGIN_H
 #define GL_SCREENSHOT_PLUGIN_H
 
-<<<<<<< HEAD:Main/KlamptQt/GLScreenshotPlugin.h
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Main/KlamptQt/GLScreenshotPlugin.h
 #include <KrisLibrary/utils/stringutils.h>
 #include <KrisLibrary/Timer.h>
 #include <string>
@@ -115,13 +111,6 @@ public:
 	  lastScreenshotTime += frameTime;
 	}
       }
-    }
-  }
-};
-
-
-#endif
-
     }
   }
 };

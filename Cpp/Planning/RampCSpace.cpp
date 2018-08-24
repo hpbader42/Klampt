@@ -1,7 +1,3 @@
-<<<<<<< HEAD:Planning/RampCSpace.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Planning/RampCSpace.cpp
 #include "RampCSpace.h"
 #include "Modeling/DynamicPath.h"
 #include <KrisLibrary/Logger.h>

@@ -1,13 +1,10 @@
-<<<<<<< HEAD:Main/RobotPoseQt/qresourcetreewidget.cpp
-#include <KrisLibrary/Logger.h>
-=======
->>>>>>> d979ad56b51aa1af0e77685c41733ad2eb913a5c:Cpp/Main/RobotPoseQt/qresourcetreewidget.cpp
 #include "qresourcetreewidget.h"
 #include <QMessageBox>
 #include <QApplication>
 #include <QHeaderView>
 #include <QDebug>
 #include <QStyledItemDelegate>
+#include <KrisLibrary/Logger.h>
 
 class NoEditDelegate: public QStyledItemDelegate {
     public:
