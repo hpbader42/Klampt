@@ -235,14 +235,14 @@ void SerializedObjectiveProcessor::Activate(bool enabled)
     if(enabled) {
       bool res=reader->Start();
       if(!res) {
-  LOG4CXX_ERROR(KrisLibrary::logger(), "SerializedObjectiveProcessor: Reader thread could not start\n");
-  LOG4CXX_ERROR(KrisLibary::logger(), "Waiting and retrying at 1s intervals...\n");
-	while(!res) {
-	  ThreadSleep(1);
-	  res = reader->Start();
-    LOG4CXX_ERROR(KrisLibrary::logger(), "...\n");
-	}
-  LOG4CXX_ERROR(KrisLibrary::logger(), "Done!\n");
+		LOG4CXX_ERROR(KrisLibrary::logger(), "SerializedObjectiveProcessor: Reader thread could not start\n");
+		LOG4CXX_ERROR(KrisLibrary::logger(), "Waiting and retrying at 1s intervals...\n");
+		while(!res) {
+			ThreadSleep(1);
+			res = reader->Start();
+			LOG4CXX_ERROR(KrisLibrary::logger(), "...\n");
+		}
+		LOG4CXX_ERROR(KrisLibrary::logger(), "Done!\n");
       }
     }
     else {

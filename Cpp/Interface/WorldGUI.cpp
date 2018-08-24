@@ -1,7 +1,7 @@
 #include "WorldGUI.h"
 #include "IO/ROS.h"
 #include <string.h>
-#include <KrisLibray/Logger.h>
+#include <KrisLibrary/Logger.h>
 #include <KrisLibrary/utils/stringutils.h>
 #include <KrisLibrary/GLdraw/GL.h>
 #include <KrisLibrary/GLdraw/drawextra.h>

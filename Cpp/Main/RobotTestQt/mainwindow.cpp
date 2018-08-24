@@ -246,6 +246,3 @@ MainWindow::~MainWindow()
     gui = NULL;
     backend = NULL;
 }
-LL;
-    backend = NULL;
-}

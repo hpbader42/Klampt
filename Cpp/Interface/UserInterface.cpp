@@ -2,7 +2,7 @@
 #include "Planning/RealTimePlanner.h"
 #include "Planning/RealTimeRRTPlanner.h"
 #include "Planning/RealTimeIKPlanner.h"
-#include <KrisLibray/Logger.h>
+#include <KrisLibrary/Logger.h>
 #include <KrisLibrary/robotics/IKFunctions.h>
 #include <KrisLibrary/GLdraw/GL.h>
 #include <KrisLibrary/GLdraw/drawextra.h>

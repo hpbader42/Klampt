@@ -5,6 +5,7 @@
 #include <KrisLibrary/math3d/primitives.h>
 #include <string>
 #include <sstream>
+#include <memory>
 using namespace std;
 
 class GenericGUIBase;

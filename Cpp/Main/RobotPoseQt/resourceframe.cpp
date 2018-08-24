@@ -400,6 +400,3 @@ void ResourceFrame::SendPathTime(double t){
     gui->SendCommand("set_path_time",t);
 }
 
-nd("set_path_time",t);
-}
-

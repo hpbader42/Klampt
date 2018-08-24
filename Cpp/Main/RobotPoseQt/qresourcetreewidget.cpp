@@ -410,5 +410,3 @@ void QResourceTreeWidget::keyPressEvent(QKeyEvent * event)
   else
     QTreeWidget::keyPressEvent(event);
 }
-t::keyPressEvent(event);
-}

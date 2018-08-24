@@ -117,6 +117,3 @@ void QRobotPoseGUI::SaveFilePrompt(QString directory_key){
     SendCommand("save_world",str);
   }
 }
-("save_world",str);
-  }
-}

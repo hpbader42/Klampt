@@ -29,7 +29,7 @@ inline bool LoadResources(TiXmlElement* e,ResourceTree& lib)
 {
   size_t origsize = lib.topLevel.size();
   if(!lib.library.Load(e)) {
-    LOG4CXX_ERROR(KrisLibrary::logger(), "Warning,  couldn't load library from XML\n")
+	LOG4CXX_ERROR(KrisLibrary::logger(), "Warning,  couldn't load library from XML\n");
     lib.TreeFromLibrary();
     return false;
   }

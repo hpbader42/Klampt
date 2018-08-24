@@ -504,6 +504,4 @@ ResourceNodePtr ResourceManager::SafePtr(ResourceNode* ptr)
   }
   AssertNotReached();
   return NULL;
-}Reached();
-  return NULL;
 }

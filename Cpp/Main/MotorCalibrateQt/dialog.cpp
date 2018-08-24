@@ -110,5 +110,3 @@ motorcalibrate.settings and run \n\
   ./MotorCalibrate motorcalibrate.settings"<<endl;
   cout<<settings<<endl;
 }
-ogger(),settings<<"\n");
-}

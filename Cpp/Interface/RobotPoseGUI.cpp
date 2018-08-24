@@ -1,5 +1,5 @@
 #include "RobotPoseGUI.h"
-#include <KrisLibary/Logger.h>
+#include <KrisLibrary/Logger.h>
 #include <KrisLibrary/GLdraw/drawMesh.h>
 #include <KrisLibrary/GLdraw/drawgeometry.h>
 #include <KrisLibrary/geometry/Conversions.h>
